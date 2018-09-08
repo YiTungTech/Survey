@@ -1,18 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-	<!-- cookie plugin -->
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+	<script src="js/js.cookie.js"></script>
 
 	<script type="text/javascript">
 		$(function(){
 			//取得cookie
-			var name = Cookies.get('name');
-			alert(name);
+			var question1 = Cookies.get('1899164626');
+			var question2 = Cookies.get('989983221');
 			
+
+			console.log(question1 +" " + question2);
+    		$("#question1").append(question1);
+    		$("#question2").append(question2);
+
+    		// Google Form Submit
+			var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626='+question1+'&entry.989983221='+question2;
+			console.log(formUrl);
+			
+			// httpGet(formUrl);
+
 		});
+
+
 
 		function httpGet(theUrl){
 		    var xmlHttp = new XMLHttpRequest();
@@ -21,33 +33,12 @@
 		    return xmlHttp.responseText;
 		}
 	</script>
-
 	
 </head>
 
 <body>
 
-	<!-- todo: 這裡要輸出計算結果 -->
-
-	<!-- <div class="widget">
-	  <h1>Checkbox and radio button widgets</h1>
-	 
-	  <h2>Radio Group</h2>
-	  <fieldset>
-	    <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
-	    <label for="radio-1">1</label>
-	    <input type="radio" name="radio-1" id="radio-1" value="1">
-	    <label for="radio-2">2</label>
-	    <input type="radio" name="radio-1" id="radio-2" value="2">
-	    <label for="radio-3">3</label>
-	    <input type="radio" name="radio-1" id="radio-3" value="3">
-	    <label for="radio-4">4</label>
-	    <input type="radio" name="radio-1" id="radio-4" value="4">
-	    <label for="radio-5">5</label>
-	    <input type="radio" name="radio-1" id="radio-5" value="5">
-	  </fieldset>
-	</div> -->
-
-	<!-- <button></button> -->
+	<p id="question1">1. 常待在密閉、通風不良空間嗎？:  </p>
+	<p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?:  </p>
 </body>
-
+</html>
