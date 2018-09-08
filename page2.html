@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+	<!-- cookie plugin -->
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+	<script type="text/javascript">
+		$(function(){
+			//取得cookie
+			var name = Cookies.get('name');
+			alert(name);
+			
+		});
+
+		function httpGet(theUrl){
+		    var xmlHttp = new XMLHttpRequest();
+		    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+		    xmlHttp.send( null );
+		    return xmlHttp.responseText;
+		}
+	</script>
+
+	
+</head>
+
+<body>
+
+	<!-- todo: 這裡要輸出計算結果 -->
+
+	<!-- <div class="widget">
+	  <h1>Checkbox and radio button widgets</h1>
+	 
+	  <h2>Radio Group</h2>
+	  <fieldset>
+	    <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
+	    <label for="radio-1">1</label>
+	    <input type="radio" name="radio-1" id="radio-1" value="1">
+	    <label for="radio-2">2</label>
+	    <input type="radio" name="radio-1" id="radio-2" value="2">
+	    <label for="radio-3">3</label>
+	    <input type="radio" name="radio-1" id="radio-3" value="3">
+	    <label for="radio-4">4</label>
+	    <input type="radio" name="radio-1" id="radio-4" value="4">
+	    <label for="radio-5">5</label>
+	    <input type="radio" name="radio-1" id="radio-5" value="5">
+	  </fieldset>
+	</div> -->
+
+	<!-- <button></button> -->
+</body>
+

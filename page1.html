@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- cookie plugin : https://github.com/js-cookie/js-cookie -->
+	<!-- <script src="../phase1/js/js.cookie.js"></script> -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script> -->
+	<!-- <script type="text/javascript">
+		var first = 'Brent';
+		var second = 'Tsai';
+		var third = first+' '+second
+		document.write('<p>');
+		document.write(third);
+		document.write('<p>');
+		
+	</script> -->
+
+	<script type="text/javascript">
+		$(function(){
+			// Google Form Submit
+			// var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=1&entry.2005620554=subline&entry.1045781291=brenttsai1148@gmail.com&entry.1065046570=高雄市左營區東門路117巷2號1樓&entry.1166974658=0999123456&entry.839337160=這裡是評論';
+			// alert(formUrl)
+			$('#page2').hide();
+
+			// Cookies.set('name', 'value', { expires: 365 });
+			// var name = Cookies.get('name'); // => 'value'
+			// console.log(5 + 6);
+			// console.log(name);
+
+			document.cookie="username=John Doe";
+			var x = document.cookie;
+			alert(x);
+			// console.log(x);
+
+			$("button").click(function(){
+				//點擊finish button
+				
+				//存cookie
+    			// $.cookie("a","12");
+    			
+    			
+    			// var name = Cookies.get('name');
+    			
+
+				//導網址
+				// window.location = 'page2.html';
+
+
+				//div invisible
+				// $('#page1').hide(); 
+				// $('#page2').show();
+
+				// var radioValue = $('input[name=radio-1]:checked').val()//取得radio button的value
+				// alert(radioValue);
+				
+				// httpGet(formUrl);
+			    
+			  });
+		});
+
+		function httpGet(theUrl){
+		    var xmlHttp = new XMLHttpRequest();
+		    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+		    xmlHttp.send( null );
+		    return xmlHttp.responseText;
+		}
+	</script>
+
+	
+</head>
+
+<body>
+
+	<div id="page1">
+	  <h1>這裡是Page1</h1>
+	 
+	  <h2>Radio Group</h2>
+	  <fieldset>
+	    <legend>1. 常待在密閉、通風不良空間嗎？</legend>
+	    <label for="radio-1">1</label>
+	    <input type="radio" name="1464687006" id="1464687006-1" value="1">
+	    <label for="radio-2">2</label>
+	    <input type="radio" name="1464687006" id="1464687006-2" value="2">
+	    <label for="radio-3">3</label>
+	    <input type="radio" name="1464687006" id="1464687006-3" value="3">
+	    <label for="radio-4">4</label>
+	    <input type="radio" name="1464687006" id="1464687006-4" value="4">
+	    <label for="radio-5">5</label>
+	    <input type="radio" name="1464687006" id="1464687006-5" value="5">
+	  </fieldset>
+
+	  <fieldset>
+	    <legend>2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?</legend>
+	    <label for="radio-1">1</label>
+	    <input type="radio" name="989983221" id="989983221-1" value="1">
+	    <label for="radio-2">2</label>
+	    <input type="radio" name="989983221" id="989983221-2" value="2">
+	    <label for="radio-3">3</label>
+	    <input type="radio" name="989983221" id="989983221-3" value="3">
+	    <label for="radio-4">4</label>
+	    <input type="radio" name="989983221" id="989983221-4" value="4">
+	    <label for="radio-5">5</label>
+	    <input type="radio" name="989983221" id="989983221-5" value="5">
+	  </fieldset>
+
+	</div>
+
+	<div class="page2" id="page2">
+	  <h1>這裡是Page2</h1>
+	 
+	  <h2>Radio Group</h2>
+	  <fieldset>
+	    <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
+	    <label for="radio-1">1</label>
+	    <input type="radio" name="radio-1" id="radio-1" value="1">
+	    <label for="radio-2">2</label>
+	    <input type="radio" name="radio-1" id="radio-2" value="2">
+	    <label for="radio-3">3</label>
+	    <input type="radio" name="radio-1" id="radio-3" value="3">
+	    <label for="radio-4">4</label>
+	    <input type="radio" name="radio-1" id="radio-4" value="4">
+	    <label for="radio-5">5</label>
+	    <input type="radio" name="radio-1" id="radio-5" value="5">
+	  </fieldset>
+	</div>
+
+	<button>填寫完成送出</button>
+</body>
+</html>
+
+
+
