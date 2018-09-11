@@ -1,44 +1,66 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="js/js.cookie.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/js.cookie.js"></script>
+    <script src="js/html2canvas.js"></script>
+    <script type="text/javascript">
+    var getCanvas;
 
-	<script type="text/javascript">
-		$(function(){
-			//取得cookie
-			var question1 = Cookies.get('1899164626');
-			var question2 = Cookies.get('989983221');
-			
-
-			console.log(question1 +" " + question2);
-    		$("#question1").append(question1);
-    		$("#question2").append(question2);
-
-    		// Google Form Submit
-			var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626='+question1+'&entry.989983221='+question2;
-			console.log(formUrl);
-			
-			httpGet(formUrl);
-
-		});
+    $(function() {
+        //取得cookie
+        var question1 = Cookies.get('1899164626');
+        var question2 = Cookies.get('989983221');
 
 
+        console.log(question1 + " " + question2);
+        $("#question1").append(question1);
+        $("#question2").append(question2);
 
-		function httpGet(theUrl){
-		    var xmlHttp = new XMLHttpRequest();
-		    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-		    xmlHttp.send( null );
-		    return xmlHttp.responseText;
-		}
-	</script>
-	
+        // Google Form Submit
+        var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=' + question1 + '&entry.989983221=' + question2;
+        console.log(formUrl);
+
+        
+
+        callCanvas();
+
+        httpGet(formUrl);
+
+    });
+
+
+
+    function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false); // false for synchronous request
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+    }
+
+    //將html轉換成canvas
+    function callCanvas() {
+    	console.log("callCanvas");
+        html2canvas(document.body).then(function(canvas) {
+            console.log("html2canvas");
+            // document.body.appendChild(canvas);
+            getCanvas = canvas;
+
+            var imgageData = canvas.toDataURL("image/png");
+            // Now browser starts downloading it instead of just showing it
+            var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+            $("#downloadimage").attr("download", "your_pic_name.png").attr("href", newData);
+        });
+    }
+    </script>
 </head>
 
 <body>
-
-	<p id="question1">1. 常待在密閉、通風不良空間嗎？:  </p>
-	<p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?:  </p>
+    <p id="question1">1. 常待在密閉、通風不良空間嗎？: </p>
+    <p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?: </p>
+    <a id="downloadimage" href="#">Download</a>
 </body>
+
 </html>
