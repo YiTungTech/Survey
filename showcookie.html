@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="js/js.cookie.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			var coo = Cookies.get();
+			var question1 = Cookies.get('1899164626');
+        	var question2 = Cookies.get('989983221');
+			$("#cookies").text("cookies="+question1);
+		});
+	</script>
+
+	
+</head>
+
+<body>
+
+	<p id="cookies">顯示所有的cookie</p>
+
+	
+</body>
+</html>
+
