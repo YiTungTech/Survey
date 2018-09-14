@@ -1,107 +1,189 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="js/js.cookie.js"></script>
-	<script type="text/javascript">
-		$(function(){
-			
-			
-
-			$("button").click(function(){
-				//點擊finish button
-				
-				//存cookie
-    			Cookies.set('1899164626', $("input[name=1899164626]:checked").val(), { expires: 365 });
-				Cookies.set('989983221', $("input[name=989983221]:checked").val(), { expires: 365 });
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="js/js.cookie.js"></script>
+    <!-- json序列化 -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.js"></script>
 
 
-				//導網址
-				window.location = 'result.html';
+    <script type="text/javascript">
+    $(function() {
+        var configData;
+        $.ajax({
+            cache: false,
+            url: "config/config.json",
+            dataType: "json",
+            success: function(data) {
+                configData = data;
+                // console.log(JSON.stringify(configData));
+
+                // //跑完所有question
+                // $.each(configData.session, function(i, session) {
+                // 	console.log('session title=' + session.title);
+                //  $.each(session.question, function(j, question) {
+                //      // alert(data[i].PageName);
+
+                //      // console.log('question=' + question.title);
+                //  });
+                // });
 
 
-				//div invisible
-				// $('#page1').hide(); 
-				// $('#page2').show();
+                // configData.session[0].question.each(function(index, element) {
+                //     console.log('name=' + $(this).name);
+                // });
 
-				// var radioValue = $('input[name=radio-1]:checked').val()//取得radio button的value
-				// alert(radioValue);
-				
-				// 
-			    
-			  });
-		});
+                //預設勾選第一個radio button
+                $('fieldset').each(function(index, element) {
+                    $(this).find('input').eq(1).attr('checked', true);
+                });
+            }
+        });
 
-		
-	</script>
 
-	
+        //取得題庫json檔案 (使用getJSON()會有cache問題)
+        // $.getJSON('config/config.json', function(jsonData) {
+
+        //     //儲存json檔
+        //     config = jsonData;
+        //     //打印出json
+        //     // console.log(JSON.stringify(config));
+        // });
+
+        var currentPage = 0;
+
+        $("#btn_pre").click(function() {
+            gotoNextAction(--currentPage);
+        });
+
+        $("#btn_next").click(function() {
+            gotoNextAction(++currentPage);
+            // currentPage++;
+            // console.log("onclick next, currentPage="+currentPage);
+            // gotoNextAction(currentPage);
+
+        });
+
+        function gotoNextAction(page) {
+
+            //如果是最後一頁，跳到檢驗報告頁
+            if (page >= $(".page").length) {
+                onClickSubmit();
+            } else {
+                //顯示上/下一頁
+                $(".page").hide();
+                $('.page').eq(page).show();
+            }
+        }
+
+
+        function onClickSubmit() {
+            //todo: 取得有勾選的radiobutton id + 值 
+            $('input:checked').each(function(index, element) {
+                //取得Radio button 有check的。
+
+
+
+
+                console.log('index =' + index + ' name=' + $(this).attr('name') + ' value=' + $(this).attr('value'));
+            });
+            //todo: 儲存成json格式
+
+            //存cookie
+            Cookies.set('1848259859', $("input[name=1848259859]:checked").val(), { expires: 365 });
+            Cookies.set('1221090849', $("input[name=989983221]:checked").val(), { expires: 365 });
+            //導網址
+            window.location = 'result.html';
+        }
+
+        $("#btn_submit").click(function() {
+            //點擊finish button
+            //div invisible
+            // $('#page1').hide(); 
+            // $('#page2').show();
+
+            // var radioValue = $('input[name=radio-1]:checked').val()//取得radio button的value
+            // alert(radioValue);
+
+            // 
+
+        });
+    });
+    </script>
 </head>
 
 <body>
+    <div class="page" id="page1">
+        <div id="target"></div>
+        <h1>這裡是Page1</h1>
+        <h2>Radio Group</h2>
+        <fieldset id="fieldset-1">
+            <legend>1. 常待在密閉、通風不良空間嗎？</legend>
+            <label for="radio-1">1</label>
+            <input type="radio" name="1848259859" id="1848259859-1" value="1">
+            <label for="radio-2">2</label>
+            <input type="radio" name="1848259859" id="1848259859-2" value="2">
+            <label for="radio-3">3</label>
+            <input type="radio" name="1848259859" id="1848259859-3" value="3">
+            <label for="radio-4">4</label>
+            <input type="radio" name="1848259859" id="1848259859-4" value="4">
+            <label for="radio-5">5</label>
+            <input type="radio" name="1848259859" id="1848259859-5" value="5">
+        </fieldset>
+        <fieldset>
+            <legend>2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?</legend>
+            <label for="radio-1">1</label>
+            <input type="radio" name="1221090849" id="1221090849-1" value="1">
+            <label for="radio-2">2</label>
+            <input type="radio" name="1221090849" id="1221090849-2" value="2">
+            <label for="radio-3">3</label>
+            <input type="radio" name="1221090849" id="1221090849-3" value="3">
+            <label for="radio-4">4</label>
+            <input type="radio" name="1221090849" id="1221090849-4" value="4">
+            <label for="radio-5">5</label>
+            <input type="radio" name="1221090849" id="1221090849-5" value="5">
+        </fieldset>
+        <fieldset>
+            <legend>3. 經常鼻塞或氣喘嗎？</legend>
+            <label for="radio-1">1</label>
+            <input type="radio" name="299261106" id="299261106-1" value="1">
+            <label for="radio-2">2</label>
+            <input type="radio" name="299261106" id="299261106-2" value="2">
+            <label for="radio-3">3</label>
+            <input type="radio" name="299261106" id="299261106-3" value="3">
+            <label for="radio-4">4</label>
+            <input type="radio" name="299261106" id="299261106-4" value="4">
+            <label for="radio-5">5</label>
+            <input type="radio" name="299261106" id="299261106-5" value="5">
+        </fieldset>
+    </div>
+    <div class="page" id="page2">
+        <h1>這裡是Page2</h1>
+        <h2>Radio Group</h2>
+        <fieldset>
+            <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
+            <label for="radio-1">1</label>
+            <input type="radio" name="842487678" id="842487678-1" value="1">
+            <label for="radio-2">2</label>
+            <input type="radio" name="842487678" id="842487678-2" value="2">
+            <label for="radio-3">3</label>
+            <input type="radio" name="842487678" id="842487678-3" value="3">
+            <label for="radio-4">4</label>
+            <input type="radio" name="842487678" id="842487678-4" value="4">
+            <label for="radio-5">5</label>
+            <input type="radio" name="842487678" id="842487678-5" value="5">
+        </fieldset>
+    </div>
 
-	<div id="page1">
-	  <h1>這裡是Page1</h1>
-	 
-	  <h2>Radio Group</h2>
-	  <fieldset>
-	    <legend>1. 常待在密閉、通風不良空間嗎？</legend>
-	    <label for="radio-1">1</label>
-	    <input type="radio" name="1899164626" id="1899164626-1" value="1">
-	    <label for="radio-2">2</label>
-	    <input type="radio" name="1899164626" id="1899164626-2" value="2">
-	    <label for="radio-3">3</label>
-	    <input type="radio" name="1899164626" id="1899164626-3" value="3">
-	    <label for="radio-4">4</label>
-	    <input type="radio" name="1899164626" id="1899164626-4" value="4">
-	    <label for="radio-5">5</label>
-	    <input type="radio" name="1899164626" id="1899164626-5" value="5">
-	  </fieldset>
-
-	  <fieldset>
-	    <legend>2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?</legend>
-	    <label for="radio-1">1</label>
-	    <input type="radio" name="989983221" id="989983221-1" value="1">
-	    <label for="radio-2">2</label>
-	    <input type="radio" name="989983221" id="989983221-2" value="2">
-	    <label for="radio-3">3</label>
-	    <input type="radio" name="989983221" id="989983221-3" value="3">
-	    <label for="radio-4">4</label>
-	    <input type="radio" name="989983221" id="989983221-4" value="4">
-	    <label for="radio-5">5</label>
-	    <input type="radio" name="989983221" id="989983221-5" value="5">
-	  </fieldset>
-
-	</div>
-
-	<div class="page2" id="page2">
-	  <h1>這裡是Page2</h1>
-	 
-	  <h2>Radio Group</h2>
-	  <fieldset>
-	    <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
-	    <label for="radio-1">1</label>
-	    <input type="radio" name="radio-1" id="radio-1" value="1">
-	    <label for="radio-2">2</label>
-	    <input type="radio" name="radio-1" id="radio-2" value="2">
-	    <label for="radio-3">3</label>
-	    <input type="radio" name="radio-1" id="radio-3" value="3">
-	    <label for="radio-4">4</label>
-	    <input type="radio" name="radio-1" id="radio-4" value="4">
-	    <label for="radio-5">5</label>
-	    <input type="radio" name="radio-1" id="radio-5" value="5">
-	  </fieldset>
-	</div>
-
-
-	<script type="text/javascript">
-		$('#page2').hide();
-	</script>
-
-	<button>填寫完成送出</button>
+    <script type="text/javascript">
+    $('#page2').hide();
+    </script>
+    <button id="btn_pre">上一頁</button>
+    <button id="btn_next">下一頁</button>
+    <button id="btn_submit">填寫完成送出</button>
 </body>
+
 </html>
-
-
-
