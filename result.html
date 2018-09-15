@@ -10,12 +10,23 @@
     var getCanvas;
 
     $(function() {
+
+        alert($('#search').val());
+        // $('#sForm').on('submit', function() {
+        //     console.log('search=' + $('#search').val());
+        // });
+
         //取得cookie
         var question1 = Cookies.get('1899164626');
         var question2 = Cookies.get('989983221');
+        var configData = Cookies.get('KEY_CONFIG');
 
 
-        console.log(question1 + " " + question2);
+        console.log('configData=' + configData);
+
+
+
+
         $("#question1").append(question1);
         $("#question2").append(question2);
 
@@ -23,7 +34,7 @@
         var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=' + question1 + '&entry.989983221=' + question2;
         console.log(formUrl);
 
-        
+
 
         callCanvas();
 
@@ -42,7 +53,7 @@
 
     //將html轉換成canvas
     function callCanvas() {
-    	console.log("callCanvas");
+        console.log("callCanvas");
         html2canvas(document.body).then(function(canvas) {
             console.log("html2canvas");
             // document.body.appendChild(canvas);
@@ -58,7 +69,8 @@
 </head>
 
 <body>
-	<p id="version">version 2</p>
+
+    <p id="version">version 2</p>
     <p id="question1">1. 常待在密閉、通風不良空間嗎？: </p>
     <p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?: </p>
     <a id="downloadimage" href="#">Download</a>

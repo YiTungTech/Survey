@@ -6,35 +6,36 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/js.cookie.js"></script>
     <!-- json序列化 -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.js"></script>
-
-
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script> -->
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.js"></script> -->
     <script type="text/javascript">
     $(function() {
-        var configData;
+        var configData; //config檔案內容
+
+        //讀取config檔案內容
         $.ajax({
             cache: false,
             url: "config/config.json",
             dataType: "json",
             success: function(data) {
                 configData = data;
+
+
+
                 // console.log(JSON.stringify(configData));
-
-                // //跑完所有question
-                // $.each(configData.session, function(i, session) {
-                // 	console.log('session title=' + session.title);
-                //  $.each(session.question, function(j, question) {
-                //      // alert(data[i].PageName);
-
-                //      // console.log('question=' + question.title);
-                //  });
-                // });
+                // var jsonData = {};
+                //跑完所有question
+                $.each(configData.session, function(i, session) {
+                    console.log('session title=' + session.title);
+                    $.each(session.question, function(j, question) {
 
 
-                // configData.session[0].question.each(function(index, element) {
-                //     console.log('name=' + $(this).name);
-                // });
+
+                        // alert(data[i].PageName);
+
+                        // console.log('question=' + question.title);
+                    });
+                });
 
                 //預設勾選第一個radio button
                 $('fieldset').each(function(index, element) {
@@ -54,7 +55,6 @@
         // });
 
         var currentPage = 0;
-
         $("#btn_pre").click(function() {
             gotoNextAction(--currentPage);
         });
@@ -81,22 +81,72 @@
 
 
         function onClickSubmit() {
-            //todo: 取得有勾選的radiobutton id + 值 
-            $('input:checked').each(function(index, element) {
-                //取得Radio button 有check的。
 
 
 
+        	var sitePersonel = {};
+        	var emptyArray = [];
+        	sitePersonel.question = emptyArray;
 
-                console.log('index =' + index + ' name=' + $(this).attr('name') + ' value=' + $(this).attr('value'));
+            //取得有勾選的radiobutton id + 值，並賦予到jsonObject身上。
+            $('input:checked').each(function(index, element) { //取得Radio button 有check的。
+                var qid = $(this).attr('name'); //取得google form id
+                var value = $(this).attr('value'); //取得radio button value
+                // var httpGetParams = {};
+
+                // var question = [];
+                // httpGetParams.question = question;
+
+                // console.log("11");
+
+
+                // var question = { "qid": question.qid, "value": question.value };
+                // httpGetParams.question.push(question);
+
+                // httpGetParams.question[index].qid = qid;
+                // httpGetParams.question[index].value = value;
+
+
+                // console.log(JSON.stringify(httpGetParams));
+
+                //----------------------------
+                
+                
+                
+
+                sitePersonel.question.push({"qid": qid,"value": value});
+                console.log(JSON.stringify(sitePersonel));
+
+
+                //跑完所有session
+                // $.each(configData.session, function(i, item_session) {
+                //     //跑完所有question
+                //     $.each(item_session.question, function(j, item_question) {
+
+                //         if (gid == item_question.qid) {
+                //             //找到radio button 對應到json object的物件
+                //             item_question.value = value; // json object set value
+
+                //         }
+                //     });
+                // });
             });
+
+            console.log(JSON.stringify(configData));
+            // 打印出json
+
+
+
             //todo: 儲存成json格式
 
-            //存cookie
-            Cookies.set('1848259859', $("input[name=1848259859]:checked").val(), { expires: 365 });
-            Cookies.set('1221090849', $("input[name=989983221]:checked").val(), { expires: 365 });
+            //todo:存cookie
+            // Cookies.set('1848259859', $("input[name=1848259859]:checked").val(), { expires: 365 });
+            // Cookies.set('1221090849', $("input[name=989983221]:checked").val(), { expires: 365 });
+            Cookies.set('KEY_CONFIG', JSON.stringify(configData), { expires: 365 });
             //導網址
-            window.location = 'result.html';
+            // $.redirect('result.html', {'arg1': 'value1', 'arg2': 'value2'});
+            // window.location = 'result.html';
+
         }
 
         $("#btn_submit").click(function() {
@@ -177,7 +227,6 @@
             <input type="radio" name="842487678" id="842487678-5" value="5">
         </fieldset>
     </div>
-
     <script type="text/javascript">
     $('#page2').hide();
     </script>
