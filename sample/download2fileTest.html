@@ -24,9 +24,9 @@
             html2canvas(document.getElementById("testdiv1")).then(function(canvas) {
                 saveAs(canvas.toDataURL(), '九宮格頁面.png');
             });
-            html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
-                saveAs(canvas.toDataURL(), '詳細頁面.png');
-            });
+            // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
+            //     saveAs(canvas.toDataURL(), '詳細頁面.png');
+            // });
         });
 
 
@@ -58,8 +58,8 @@
 </head>
 
 <body>
-    <p id="version">version 6</p>
-    <a id="downloadimage1" href="#">下載 (九宮格頁面) + 下載 (詳細頁面)</a>
+    <p id="version">version 8</p>
+    <a id="downloadimage1" href="#">下載 (九宮格頁面)</a>
     <br>
     <a id="downloadimage2" href="#">下載 (詳細頁面)</a>
     <br>
