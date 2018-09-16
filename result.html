@@ -7,40 +7,179 @@
     <script src="js/js.cookie.js"></script>
     <script src="js/html2canvas.js"></script>
     <script type="text/javascript">
-    var getCanvas;
-
+    var gSheetUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?';
     $(function() {
+        //測試網址:http://localhost/~brent/Survey/result.html?1848259859=2&1221090849=2&299261106=2&842487678=2
 
-        alert($('#search').val());
-        // $('#sForm').on('submit', function() {
-        //     console.log('search=' + $('#search').val());
-        // });
-
-        //取得cookie
-        var question1 = Cookies.get('1899164626');
-        var question2 = Cookies.get('989983221');
-        var configData = Cookies.get('KEY_CONFIG');
+        console.log('start()');
+        var config; //json格式的config設定檔
+        initConfig();
 
 
-        console.log('configData=' + configData);
+        //解析httpget
+        //1. 提供method取得httpget參數
+        //2. 組合出google sheet url
+        $.extend({
+            getUrlVars: function() {
+                console.log('getUrlVar()');
+                var vars = [],
+                    hash; //目前不清楚vars型別是什麼?怎麼使用?
+
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                console.log('hashes=' + hashes + ' len=' + hashes.length);
+
+
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                    // console.log('hash[0]='+hash[0]+' hash[1]='+hash[1]);
+                    // console.log('vars[ID]='+vars[hash[0]]);
+
+                    //gSheet的Url組合
+                    gSheetUrl += 'entry.' + hash[0] + '=' + hash[1];
+                    if (i != (hashes.length - 1)) { gSheetUrl += '&'; } //最後不加&
+                }
+                return vars;
+            },
+            getUrlVar: function(name) {
+                //回傳http get參數
+                return $.getUrlVars()[name];
+            }
+        });
+
+
+        function initConfig() {
+            // 讀取config檔案
+            $.ajax({
+                cache: false,
+                url: "config/config.json",
+                dataType: "json",
+                success: function(data) {
+                    config = data;
+                    updateConfig();
+                }
+            });
+        }
+
+        function updateConfig() {
+            $.each(config.session, function(i, item_session) {
+                //跑完所有question
+                $.each(item_session.question, function(j, item_question) {
+                    item_question.value = $.getUrlVar(item_question.qid); // json object set value
+
+                });
+            });
+            console.log('config=' + JSON.stringify(config));
+            calculate();
+        }
+
+        //計算data
+        function calculate() {
+            var singleAverage = calculateSingleAverage();
+            $('#typeB').append(singleAverage);
+            console.log('singleAverage=' + singleAverage);
+            var totalAverage = '';
+
+        }
+
+        function calculateSingleAverage() {
+            var uiValue = []; //要呈現在UI上的分數
+            var uiWording = []; //要呈現在UI上的wording
+
+            $.each(config.session, function(i, item_session) {
+                var valueArray = []; //所有的值
+                var sumValue = 0; //加總
+                $.each(item_session.question, function(j, item_question) {
+                    var score = valueToScore(parseInt(item_question.value));
+                    sumValue += score;
+                    valueArray.push(score);
+                });
+
+                //最大值
+                var valueMax = Math.max.apply(null, valueArray);
+                // console.log('TypeB_' + i + '_最大值=' + valueMax);
+
+                //平均值
+                var valueAverage = sumValue / item_session.question.length;
+                // console.log('TypeB_' + i + '_平均值=' + valueAverage);
+
+                //1.綜合平均值 2.取4捨5入到小數第1位
+                var tem = (valueMax + valueAverage) / 2;
+                uiValue.push(Math.round(tem * 10) / 10);
+
+
+            });
+
+            console.log('uiValue=' + uiValue.toString());
+
+            $.each(uiValue, function(i, value) {
+                uiWording.push(ScoreToWording_typeB(i, uiValue[i]));
+            });
+
+            console.log('uiWording=' + uiWording.toString());
+
+            // valueAverage = (Math.round((sumValue / item_session.question.length) * 10) / 10); //平均值取4捨5入到小數第1位
+            return uiValue; //todo: 應該回傳array[valueAverage,valueMax]
+        }
+
+        //(模組)分算換算
+        function valueToScore(value) {
+            switch (value) {
+                case 1:
+                    return 0;
+                case 2:
+                    return 2.5;
+                case 3:
+                    return 4;
+                case 4:
+                    return 7.5;
+                case 5:
+                    return 10;
+            }
+        }
+
+        function ScoreToWording_typeB(session, value) {
+            if (session == 0) {
+                if (2 >= value) { return "您沒有供氧能力不足的現象。"; }
+                if (4 >= value && value > 2) { return "輕度供氧能力不足。"; }
+                if (7 >= value && value > 4) { return "供氧能力不佳，容易發生缺氧。"; }
+                if (10 >= value && value > 7) { return "嚴重的供氧障礙，經常性缺氧。"; }
+            }
+            if (session == 1) {
+                if (2 >= value) { return "您沒有能量透支的現象。"; }
+                if (4 >= value && value > 2) { return "輕度能量透支。"; }
+                if (7 >= value && value > 4) { return "中度能量透支，消耗器官儲備。"; }
+                if (10 >= value && value > 7) { return "嚴重能量透支，易形成缺氧病灶。"; }
+            }
+
+        }
+
+        function calculateTotalAverage() {
+
+        }
 
 
 
+        //todo: postdata (使用raw httpget + String replace應該就可以辦到，最後用jQurey post送出)
+        // console.log('gSheetUrl=' + gSheetUrl);
+        // $.get(URL,callback);
 
-        $("#question1").append(question1);
-        $("#question2").append(question2);
+        //todo: 截圖功能先不用在這裡寫 (demo已經有寫了)
+
+
+        // $("#question1").append(question1);
+        // $("#question2").append(question2);
 
         // Google Form Submit
-        var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=' + question1 + '&entry.989983221=' + question2;
-        console.log(formUrl);
+        // var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=' + question1 + '&entry.989983221=' + question2;
+        // console.log(formUrl);
 
-
-
-        callCanvas();
 
         // httpGet(formUrl);
 
     });
+
 
 
 
@@ -69,8 +208,8 @@
 </head>
 
 <body>
-
     <p id="version">version 2</p>
+    <p id="typeB">供：</p>
     <p id="question1">1. 常待在密閉、通風不良空間嗎？: </p>
     <p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?: </p>
     <a id="downloadimage" href="#">Download</a>
