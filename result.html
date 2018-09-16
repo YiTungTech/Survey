@@ -16,19 +16,16 @@
         initConfig();
 
 
-        //解析httpget
+        //-----解析httpget-----
         //1. 提供method取得httpget參數
         //2. 組合出google sheet url
         $.extend({
             getUrlVars: function() {
-                console.log('getUrlVar()');
                 var vars = [],
                     hash; //目前不清楚vars型別是什麼?怎麼使用?
 
                 var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-                console.log('hashes=' + hashes + ' len=' + hashes.length);
-
-
+            
                 for (var i = 0; i < hashes.length; i++) {
                     hash = hashes[i].split('=');
                     vars.push(hash[0]);
@@ -76,16 +73,21 @@
 
         //計算data
         function calculate() {
-            var singleAverage = calculateSingleAverage();
-            $('#typeB').append(singleAverage);
-            console.log('singleAverage=' + singleAverage);
-            var totalAverage = '';
+            calculateSingleAverage_Type();
+            calculateTotalAverage_Type_0_4();
 
         }
 
-        function calculateSingleAverage() {
-            var uiValue = []; //要呈現在UI上的分數
-            var uiWording = []; //要呈現在UI上的wording
+        //計算
+        //1. -----Type_0_4-----0.4總
+        //2. -----Type_1_1-----1.1供
+        //3. -----Type_1_2-----1.2供評
+        function calculateSingleAverage_Type() {
+            var uiValue = []; //要呈現在UI，各項「分數」
+            var uiWording = []; //要呈現在UI，各項「wording」
+            var uiTotalValue;//要呈現在UI，總「分數」
+            var tempSumTotalValue = 0; //計算過程中暫存，將5大類分數累加
+            var tempTotalValues = [];
 
             $.each(config.session, function(i, item_session) {
                 var valueArray = []; //所有的值
@@ -98,29 +100,54 @@
 
                 //最大值
                 var valueMax = Math.max.apply(null, valueArray);
-                // console.log('TypeB_' + i + '_最大值=' + valueMax);
+                // console.log('Type_1_1_' + i + '_最大值=' + valueMax);
 
                 //平均值
                 var valueAverage = sumValue / item_session.question.length;
-                // console.log('TypeB_' + i + '_平均值=' + valueAverage);
+                // console.log('Type_1_1_' + i + '_平均值=' + valueAverage);
 
                 //1.綜合平均值 2.取4捨5入到小數第1位
-                var tem = (valueMax + valueAverage) / 2;
-                uiValue.push(Math.round(tem * 10) / 10);
+                var temp = (valueMax + valueAverage) / 2;
+                console.log('temp='+temp);
+                tempSumTotalValue += temp;
+                tempTotalValues.push(temp);
+                uiValue.push(Math.round(temp * 10) / 10);
+
+
 
 
             });
 
             console.log('uiValue=' + uiValue.toString());
 
+            //mapping文字
             $.each(uiValue, function(i, value) {
-                uiWording.push(ScoreToWording_typeB(i, uiValue[i]));
+                uiWording.push(ScoreToWording_Type_1_1(i, uiValue[i]));
             });
-
             console.log('uiWording=' + uiWording.toString());
 
-            // valueAverage = (Math.round((sumValue / item_session.question.length) * 10) / 10); //平均值取4捨5入到小數第1位
-            return uiValue; //todo: 應該回傳array[valueAverage,valueMax]
+            //-----換算成「總」Type_0_4 -----
+            var tempValueMax = Math.max.apply(null, tempTotalValues);
+            var tempValueAverage = (tempSumTotalValue/config.session.length);
+            //1.綜合平均值 2.取4捨5入到小數第1位
+            uiTotalValue = (tempValueMax + tempValueAverage)/2;
+            uiTotalValue = Math.round(uiTotalValue * 10) / 10;
+            console.log('uiTotalValue='+uiTotalValue);
+            //-----換算成「總」Type_0_4 -----
+            
+            //-----update UI-----
+            $.each(uiValue, function(i, value) {
+                $('#Type_1_1_'+i).append(value);
+            });
+
+            $.each(uiWording, function(i, value) {
+                $('#Type_1_2_'+i).append(value);
+            });
+
+            $('#Type_1_0_4').append(uiTotalValue);
+            //-----update UI-----
+
+
         }
 
         //(模組)分算換算
@@ -139,7 +166,7 @@
             }
         }
 
-        function ScoreToWording_typeB(session, value) {
+        function ScoreToWording_Type_1_1(session, value) {
             if (session == 0) {
                 if (2 >= value) { return "您沒有供氧能力不足的現象。"; }
                 if (4 >= value && value > 2) { return "輕度供氧能力不足。"; }
@@ -155,7 +182,7 @@
 
         }
 
-        function calculateTotalAverage() {
+        function calculateTotalAverage_Type_0_4() {
 
         }
 
@@ -209,9 +236,14 @@
 
 <body>
     <p id="version">version 2</p>
-    <p id="typeB">供：</p>
-    <p id="question1">1. 常待在密閉、通風不良空間嗎？: </p>
-    <p id="question2">2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?: </p>
+
+    <p id="Type_1_0_4">總：</p>
+
+    <p id="Type_1_1_0">供：</p>
+    <p id="Type_1_2_0">供評：</p>
+    <br>
+    <p id="Type_1_1_1">耗：</p>
+    <p id="Type_1_2_1">耗評：</p>
     <a id="downloadimage" href="#">Download</a>
 </body>
 
