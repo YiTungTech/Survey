@@ -25,7 +25,7 @@
                     hash; //目前不清楚vars型別是什麼?怎麼使用?
 
                 var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-            
+
                 for (var i = 0; i < hashes.length; i++) {
                     hash = hashes[i].split('=');
                     vars.push(hash[0]);
@@ -74,8 +74,7 @@
         //計算data
         function calculate() {
             calculateSingleAverage_Type();
-            calculateTotalAverage_Type_0_4();
-
+            calculateAdvisement();
         }
 
         //計算
@@ -85,7 +84,7 @@
         function calculateSingleAverage_Type() {
             var uiValue = []; //要呈現在UI，各項「分數」
             var uiWording = []; //要呈現在UI，各項「wording」
-            var uiTotalValue;//要呈現在UI，總「分數」
+            var uiTotalValue; //要呈現在UI，總「分數」
             var tempSumTotalValue = 0; //計算過程中暫存，將5大類分數累加
             var tempTotalValues = [];
 
@@ -108,7 +107,7 @@
 
                 //1.綜合平均值 2.取4捨5入到小數第1位
                 var temp = (valueMax + valueAverage) / 2;
-                console.log('temp='+temp);
+                console.log('temp=' + temp);
                 tempSumTotalValue += temp;
                 tempTotalValues.push(temp);
                 uiValue.push(Math.round(temp * 10) / 10);
@@ -128,20 +127,20 @@
 
             //-----換算成「總」Type_0_4 -----
             var tempValueMax = Math.max.apply(null, tempTotalValues);
-            var tempValueAverage = (tempSumTotalValue/config.session.length);
+            var tempValueAverage = (tempSumTotalValue / config.session.length);
             //1.綜合平均值 2.取4捨5入到小數第1位
-            uiTotalValue = (tempValueMax + tempValueAverage)/2;
+            uiTotalValue = (tempValueMax + tempValueAverage) / 2;
             uiTotalValue = Math.round(uiTotalValue * 10) / 10;
-            console.log('uiTotalValue='+uiTotalValue);
+            console.log('uiTotalValue=' + uiTotalValue);
             //-----換算成「總」Type_0_4 -----
-            
+
             //-----update UI-----
             $.each(uiValue, function(i, value) {
-                $('#Type_1_1_'+i).append(value);
+                $('#Type_1_1_' + i).append(value);
             });
 
             $.each(uiWording, function(i, value) {
-                $('#Type_1_2_'+i).append(value);
+                $('#Type_1_2_' + i).append(value);
             });
 
             $('#Type_1_0_4').append(uiTotalValue);
@@ -158,7 +157,7 @@
                 case 2:
                     return 2.5;
                 case 3:
-                    return 4;
+                    return 5;
                 case 4:
                     return 7.5;
                 case 5:
@@ -166,6 +165,7 @@
             }
         }
 
+        //取得wording ----- Type_1_1 ----- 1.2供評
         function ScoreToWording_Type_1_1(session, value) {
             if (session == 0) {
                 if (2 >= value) { return "您沒有供氧能力不足的現象。"; }
@@ -182,10 +182,28 @@
 
         }
 
-        function calculateTotalAverage_Type_0_4() {
+        //計算
+        //1. -----Type_1_10----- 1.10供運?
+        function calculateAdvisement() {
 
+            //todo: 要可填入供2建、供3建....耗1建...
+            var advisementGIDGroup = ['1848259859', '1221090849', '299261106']; //填入ID
+            var uiAdvisement = '';
+            for (var i = advisementGIDGroup.length - 1; i >= 0; i--) {
+                var score = valueToScore(parseInt($.getUrlVar(advisementGIDGroup[i])));
+                if (score >= 5) {
+                    uiAdvisement = "顯示供1建ＷＯＲＤＩＮＧ";
+                    break;
+                }
+
+            }
+
+            //-----update UI-----
+            if (uiAdvisement.length > 0) {
+                $("#Type_1_10_1").append(uiAdvisement);
+            }
+            //-----update UI-----
         }
-
 
 
         //todo: postdata (使用raw httpget + String replace應該就可以辦到，最後用jQurey post送出)
@@ -211,10 +229,21 @@
 
 
     function httpGet(theUrl) {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", theUrl, false); // false for synchronous request
-        xmlHttp.send(null);
-        return xmlHttp.responseText;
+
+
+
+
+        // $.post("demo_test_post.asp", {
+        //         name: "Donald Duck",
+        //         city: "Duckburg"
+        //     },
+        //     function(data, status) {
+        //         $("#myText").text("Data: " + data + " Status: " + status);
+        //     });
+        // var xmlHttp = new XMLHttpRequest();
+        // xmlHttp.open("GET", theUrl, false); // false for synchronous request
+        // xmlHttp.send(null);
+        // return xmlHttp.responseText;
     }
 
     //將html轉換成canvas
@@ -236,14 +265,15 @@
 
 <body>
     <p id="version">version 2</p>
-
     <p id="Type_1_0_4">總：</p>
-
     <p id="Type_1_1_0">供：</p>
     <p id="Type_1_2_0">供評：</p>
     <br>
     <p id="Type_1_1_1">耗：</p>
     <p id="Type_1_2_1">耗評：</p>
+    <br>
+    <p>----------------------</p>
+    <p id="Type_1_10_1">供1建：</p>
     <a id="downloadimage" href="#">Download</a>
 </body>
 
