@@ -7,35 +7,30 @@
     <script src="js/js.cookie.js"></script>
     <script src="js/html2canvas.js"></script>
     <script type="text/javascript">
-    var gSheetUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?';
+    var gFormID = '1FAIpQLSf61A3kcoDVT929bta3X01AMaz4ieTDYwL2Ehz9FoHVuaIVnw'; //google 表單ID [for test CopyDown + Gmerge 版本 (Responses)]
+    var gSheetParam = {};//google sheet所需要的參數
+
     $(function() {
-        //測試網址:http://localhost/~brent/Survey/result.html?1848259859=2&1221090849=2&299261106=2&842487678=2
 
         console.log('start()');
         var config; //json格式的config設定檔
         initConfig();
 
 
-        //-----解析httpget-----
-        //1. 提供method取得httpget參數
+        //-----解析gSheetRequestParam-----
+        //1. 提供method取得gSheetRequestParam參數
         //2. 組合出google sheet url
         $.extend({
             getUrlVars: function() {
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
                 var vars = [],
                     hash; //目前不清楚vars型別是什麼?怎麼使用?
-
-                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-
                 for (var i = 0; i < hashes.length; i++) {
                     hash = hashes[i].split('=');
                     vars.push(hash[0]);
                     vars[hash[0]] = hash[1];
-                    // console.log('hash[0]='+hash[0]+' hash[1]='+hash[1]);
-                    // console.log('vars[ID]='+vars[hash[0]]);
-
-                    //gSheet的Url組合
-                    gSheetUrl += 'entry.' + hash[0] + '=' + hash[1];
-                    if (i != (hashes.length - 1)) { gSheetUrl += '&'; } //最後不加&
+                    //動態宣告gSheetParam物件的Object
+                    gSheetParam['entry.' + hash[0]] = decodeURIComponent(hash[1]);
                 }
                 return vars;
             },
@@ -75,6 +70,9 @@
         function calculate() {
             calculateSingleAverage_Type();
             calculateAdvisement();
+
+            //send request to google sheet
+            gSheetRequestParam();   
         }
 
         //計算
@@ -203,47 +201,37 @@
                 $("#Type_1_10_1").append(uiAdvisement);
             }
             //-----update UI-----
+
+
+            
         }
-
-
-        //todo: postdata (使用raw httpget + String replace應該就可以辦到，最後用jQurey post送出)
-        // console.log('gSheetUrl=' + gSheetUrl);
-        // $.get(URL,callback);
 
         //todo: 截圖功能先不用在這裡寫 (demo已經有寫了)
 
-
-        // $("#question1").append(question1);
-        // $("#question2").append(question2);
-
-        // Google Form Submit
-        // var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSehEHkEm_7DqJnYL5Az5Hre3nZoBTkdwFiQdtwqY885xtadyw/formResponse?entry.1899164626=' + question1 + '&entry.989983221=' + question2;
-        // console.log(formUrl);
-
-
-        // httpGet(formUrl);
-
+        
     });
 
 
 
 
-    function httpGet(theUrl) {
+    function gSheetRequestParam() {
 
-
-
-
-        // $.post("demo_test_post.asp", {
-        //         name: "Donald Duck",
-        //         city: "Duckburg"
-        //     },
-        //     function(data, status) {
-        //         $("#myText").text("Data: " + data + " Status: " + status);
-        //     });
-        // var xmlHttp = new XMLHttpRequest();
-        // xmlHttp.open("GET", theUrl, false); // false for synchronous request
-        // xmlHttp.send(null);
-        // return xmlHttp.responseText;
+        console.log('aryRow=' + JSON.stringify(gSheetParam));
+        //todo: 測試先不送request
+        // $.ajax({
+        //     url: 'https://docs.google.com/forms/d/e/' + gFormID + '/formResponse',
+        //     data: gSheetParam,
+        //     type: "POST",
+        //     dataType: "xml",
+        //     statusCode: {
+        //         0: function() {
+        //             console.log('Success message');
+        //         },
+        //         200: function() {
+        //             console.log('Success message');
+        //         }
+        //     }
+        // });
     }
 
     //將html轉換成canvas
