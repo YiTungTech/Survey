@@ -72,7 +72,7 @@
             calculateAdvisement();
 
             //send request to google sheet
-            gSheetRequestParam();   
+            // gSheetRequestParam();   //todo: 測試先不送request
         }
 
         //計算
@@ -211,27 +211,24 @@
         
     });
 
-
-
-
+    //send gooogle sheet request
     function gSheetRequestParam() {
 
-        console.log('aryRow=' + JSON.stringify(gSheetParam));
-        //todo: 測試先不送request
-        // $.ajax({
-        //     url: 'https://docs.google.com/forms/d/e/' + gFormID + '/formResponse',
-        //     data: gSheetParam,
-        //     type: "POST",
-        //     dataType: "xml",
-        //     statusCode: {
-        //         0: function() {
-        //             console.log('Success message');
-        //         },
-        //         200: function() {
-        //             console.log('Success message');
-        //         }
-        //     }
-        // });
+        console.log('gSheetParam=' + JSON.stringify(gSheetParam));
+        $.ajax({
+            url: 'https://docs.google.com/forms/d/e/' + gFormID + '/formResponse',
+            data: gSheetParam,
+            type: "POST",
+            dataType: "xml",
+            statusCode: {
+                0: function() {
+                    console.log('Success message');
+                },
+                200: function() {
+                    console.log('Success message');
+                }
+            }
+        });
     }
 
     //將html轉換成canvas
