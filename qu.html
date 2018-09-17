@@ -9,7 +9,11 @@
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script> -->
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.js"></script> -->
     <script type="text/javascript">
+    var COOKIE_KEY_LAST_RECORD_URL = 'LAST_RECORD';
+
     $(function() {
+
+        init();
 
         //預設勾選第一個radio button
         $('fieldset').each(function(index, element) {
@@ -17,18 +21,18 @@
         });
 
         //檢查是否有上次檢驗報告紀錄
-        var lastRecord = Cookies.get('LAST_RECORD');
-        if (typeof lastRecord != 'undefined') {
+        var lastRecordUrl = Cookies.get(COOKIE_KEY_LAST_RECORD_URL);
+        if (typeof lastRecordUrl != 'undefined') {
             //cookie有值
-            $('#btn_lastRecord').show();
+            $('#btn_lastRecordUrl').show();
 
-            $('#btn_lastRecord').click(function() {
-                window.location.href = lastRecord;
-                return false;//false : 結束button後續動作
+            $('#btn_lastRecordUrl').click(function() {
+                goNextPage(lastRecordUrl);
+                return false; //false : 結束button後續動作
             });
         } else {
             //cookie沒有值
-            $('#btn_lastRecord').hide();
+            $('#btn_lastRecordUrl').hide();
         }
 
         //設定上下頁按鈕
@@ -70,13 +74,32 @@
             });
 
             //將參數記錄至cookie，下次使用
-            Cookies.set('LAST_RECORD', url, { expires: 365 });
+            Cookies.set(COOKIE_KEY_LAST_RECORD_URL, url, { expires: 365 });
 
             //導網址
-            window.location = url;
+            goNextPage(url);
 
         }
     });
+
+    function goNextPage(pageUrl) {
+        console.log('goNextPage');
+        //解除綁定
+        $(window).unbind('beforeunload');
+
+        //導網址
+        window.location.href = pageUrl;
+    }
+
+
+    function init() {
+        console.log('init()');
+        $(window).bind('beforeunload', function(e) {
+
+            console.log('beforeunload');
+            return '資料尚未存檔，確定是否要離開？'; //Chrome v51 (2016/04) 取消自訂wording
+        });
+    }
     </script>
 </head>
 
@@ -147,7 +170,7 @@
     </script>
     <button id="btn_pre">上一頁</button>
     <button id="btn_next">下一頁</button>
-    <button id="btn_lastRecord">查看上次檢驗報告</button>
+    <button id="btn_lastRecordUrl">查看上次檢驗報告</button>
 </body>
 
 </html>
