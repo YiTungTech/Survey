@@ -16,28 +16,10 @@
 
 <body>
     <style type="text/css">
-    /*.card-title {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        line-height: X;
-        max-height: X*1;
-    }
-
-    .card-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-flex;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        line-height: X;
-        max-height: X*2;
-    }*/
+    /* 限制文字行數不能超過2行*/
     /* styles for '...' */
 
-    .card-text {
+    .card-title,.card-text {
         /* hide text if it more than N lines  */
         overflow: hidden;
         /* for set '...' in absolute position */
@@ -79,21 +61,13 @@
         /* bg color = bg color under block */
         background: white;
     }
+    /* 限制文字行數不能超過2行*/
 
-    .card-grid-top {
-        min-height: 220px;
-        max-height: 220px;
-    }
+    .card-grid-top {}
 
-    .card-grid-middle-large {
-        min-height: 340px;
-        max-height: 340px;
-    }
+    .card-grid-middle-large {}
 
-    .card-grid-middle-small {
-        min-height: 220px;
-        max-height: 220px;
-    }
+    .card-grid-middle-small {}
 
     .card-columns {
         column-count: 1;
@@ -103,29 +77,37 @@
         column-count: 1;
     }
 
-    
-
     @media (min-width: 576px) {
-    	.card-columns {
+        .card-columns {
             column-count: 4;
         }
         .card-columns-header {
             column-count: 2;
         }
+
+        .card-grid-top {
+            min-height: 220px;
+            max-height: 220px;
+        }
+
+        .card-grid-middle-large {
+            min-height: 340px;
+            max-height: 340px;
+        }
+
+        .card-grid-middle-small {
+            min-height: 220px;
+            max-height: 220px;
+        }
     }
 
-    @media (min-width: 768px) {
-    	
-    }
+    @media (min-width: 768px) {}
 
-    @media (min-width: 992px) {
-        
-    }
+    @media (min-width: 992px) {}
 
     @media (min-width: 1200px) {}
     </style>
     <div id="table_canvas">
-
         <div class="container">
             <div class="card-columns-header">
                 <div class="card card-grid-top">
@@ -136,7 +118,6 @@
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
                     </div>
                 </div>
-
                 <div class="card card-grid-top">
                     <div class="card-body">
                         <h4 class="card-title" id="test">聚焦內在的方法</h4>
@@ -147,7 +128,6 @@
                 </div>
             </div>
         </div>
-
         <div class="container">
             <div class="card-columns">
                 <div class="card card-grid-middle-large">
