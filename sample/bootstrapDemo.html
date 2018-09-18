@@ -11,45 +11,87 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="../js/jquery.matchHeight.js"></script>
+    <script src="../js/html2canvas.js"></script>
 </head>
 
 <body>
     <style type="text/css">
-
-    .card-title {
+    /*.card-title {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1;
-        /* number of lines to show */
         line-height: X;
-        /* fallback */
         max-height: X*1;
-        /* fallback */
     }
+
     .card-text {
         overflow: hidden;
         text-overflow: ellipsis;
-        display: -webkit-box;
+        display: inline-flex;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
-        /* number of lines to show */
         line-height: X;
-        /* fallback */
         max-height: X*2;
-        /* fallback */
+    }*/
+    /* styles for '...' */
+
+    .card-text {
+        /* hide text if it more than N lines  */
+        overflow: hidden;
+        /* for set '...' in absolute position */
+        position: relative;
+        /* use this value to count block height */
+        line-height: 1.2em;
+        /* max-height = line-height (1.2) * lines max number (3) */
+        max-height: 2.4em;
+        /* fix problem when last visible word doesn't adjoin right side  */
+        text-align: justify;
+        /* place for '...' */
+        margin-right: -1em;
+        padding-right: 1em;
     }
+    /* create the ... */
+
+    .card-text:before {
+        /* points in the end */
+        content: '...';
+        /* absolute position */
+        position: absolute;
+        /* set position to right bottom corner of block */
+        right: 0;
+        bottom: 0;
+    }
+    /* hide ... if we have text, which is less than or equal to max lines */
+
+    .card-text:after {
+        /* points in the end */
+        content: '';
+        /* absolute position */
+        position: absolute;
+        /* set position to right bottom corner of text */
+        right: 0;
+        /* set width and height */
+        width: 1em;
+        height: 1em;
+        margin-top: 0.2em;
+        /* bg color = bg color under block */
+        background: white;
+    }
+
+
+
 
 
     .card-large {
-    	min-height: 340px;
-    	max-height: 340px;
+        min-height: 340px;
+        max-height: 1000px;
     }
 
     .small {
-    	min-height: 220px;
-    	max-height: 220px;
+        min-height: 220px;
+        max-height: 1000px;
     }
 
     .card-columns {
@@ -57,7 +99,14 @@
         font-size: 1rem;
     }
 
+    .card-columns-header {
+        column-count: 1;
+    }
 
+    .card-header {
+        min-height: 220px;
+        max-height: 220px;
+    }
 
     @media (min-width: 576px) {}
 
@@ -68,143 +117,157 @@
             column-count: 4;
             font-size: 1rem;
         }
+        .card-columns-header {
+            column-count: 2;
+        }
     }
 
     @media (min-width: 1200px) {}
     </style>
-    <!-- <style type="text/css">
-    .card-columns {
-        column-count: 1;
-    }
-
-    .card-columns-header {
-        column-count: 2;
-    }
-    </style> -->
-    <!-- <div class="container">
-        <div class="card-columns-header">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title" align="center">創造有利條件的方法</h4>
-                    <p class="card-text">1. 自己製作一份說到做到的承諾表，按表操課。</p>
-                    <p class="card-text">2. 自己製作一份說到做到的承諾表，按表操課。</p>
-                    <p class="card-text">3. 自己製作一份說到做到的承諾表，按表操課。</p>
+    <div id="table_canvas">
+        <div class="container">
+            <div class="card-columns-header">
+                <div class="card card-header">
+                    <div class="card-body">
+                        <h4 class="card-title" align="center">創造有利條件的方法</h4>
+                        <p class="card-text">1. 自己製作一份說到做到的承諾表，按表操課。</p>
+                        <p class="card-text">2. 自己製作一份說到做到的承諾表，按表操課。</p>
+                        <p class="card-text">3. 自己製作一份說到做到的承諾表，按表操課。</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title" align="center">聚焦內在的方法</h4>
-                    <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
-                    <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
-                    <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。先將自己目前的目標寫下，目標不要訂太高、太困難。先將自己目前的目標寫下，目標不要訂太高、太困難。先將自己目前的目標寫下，目標不要訂太高、太困難。先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
+                <div class="card card-header">
+                    <div class="card-body">
+                        <h4 class="card-title" align="center">聚焦內在的方法</h4>
+                        <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
+                        <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
+                        <p class="card-text">1. 先將自己目前的目標寫下，目標不要訂太高、太困難。</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div> -->
-    <button id="btn_same">version 1</button>
-    <div class="container" id="test">
-        <div class="card-columns card-columns-body">
-            <div class="card card-large">
-                <div class="card-body">
-                    <h4 class="card-title">1.供給性缺氧檢驗數據</h4>
-                    <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
-                    <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
-                    <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
+        <br>
+        <div class="container">
+            <div class="card-columns card-columns-body">
+                <div class="card card-large">
+                    <div class="card-body">
+                        <h4 class="card-title" id="test">1.供給性缺氧檢驗數據</h4>
+                        <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
+                        <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
+                        <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card  card-large">
-                <div class="card-body">
-                    <h4 class="card-title">2.耗損性缺氧檢驗數據</h4>
-                    <p class="card-text">能量不足分析</p>
-                    <p class="card-text">能量不足分析</p>
+                <div class="card  card-large">
+                    <div class="card-body">
+                        <h4 class="card-title">2.耗損性缺氧檢驗數據</h4>
+                        <p class="card-text">能量不足分析</p>
+                        <p class="card-text">能量不足分析</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body small">
-                    <h4 class="card-title">3.熱性體質檢驗數據</h4>
-                    <p class="card-text">損傷發炎程度 : x</p>
-                    <p class="card-text">1. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
+                <div class="card">
+                    <div class="card-body small">
+                        <h4 class="card-title">3.熱性體質檢驗數據</h4>
+                        <p class="card-text">損傷發炎程度 : x</p>
+                        <p class="card-text">1. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body small">
-                    <h4 class="card-title">4.濕性體質檢驗數據</h4>
-                    <p class="card-text">循環淤滯程度 : x</p>
-                    <p class="card-text">損傷發炎程度</p>
+                <div class="card">
+                    <div class="card-body small">
+                        <h4 class="card-title">4.濕性體質檢驗數據</h4>
+                        <p class="card-text">循環淤滯程度 : x</p>
+                        <p class="card-text">損傷發炎程度</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body small">
-                    <h4 class="card-title">5.寒性體質檢驗數據</h4>
-                    <p class="card-text">失調衰退程度 : x</p>
-                    <p class="card-text">損傷發炎程度</p>
+                <div class="card">
+                    <div class="card-body small">
+                        <h4 class="card-title">5.寒性體質檢驗數據</h4>
+                        <p class="card-text">失調衰退程度 : x</p>
+                        <p class="card-text">損傷發炎程度</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card text-xs-center">
-                <div class="card-body small">
-                    <h4 class="card-title">6.免疫代謝的方案</h4>
-                    <p class="card-text">1. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
-                    <!-- <p class="card-text">2. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
-                    <p class="card-text">3. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p> -->
+                <div class="card text-xs-center">
+                    <div class="card-body small">
+                        <h4 class="card-title">6.免疫代謝的方案</h4>
+                        <p class="card-text">1. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
+                        <p class="card-text">2. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
+                        <p class="card-text">3. 損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度損傷發炎程度</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body small">
-                    <h4 class="card-title">7.微循環改善的方案</h4>
-                    <p class="card-text">1.微循環改善的方案</p>
-                    <p class="card-text">2.微循環改善的方案</p>
-                    <p class="card-text">3.微循環改善的方案</p>
+                <div class="card">
+                    <div class="card-body small">
+                        <h4 class="card-title">7.微循環改善的方案</h4>
+                        <p class="card-text">1.微循環改善的方案</p>
+                        <p class="card-text">2.微循環改善的方案</p>
+                        <p class="card-text">3.微循環改善的方案</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body small">
-                    <h4 class="card-title">8.機能復甦的方案</h4>
-                    <p class="card-text">1.機能復甦的方案</p>
-                    <p class="card-text">2.機能復甦的方案</p>
-                    <p class="card-text">3.機能復甦的方案</p>
+                <div class="card">
+                    <div class="card-body small">
+                        <h4 class="card-title">8.機能復甦的方案</h4>
+                        <p class="card-text">1.機能復甦的方案</p>
+                        <p class="card-text">2.機能復甦的方案</p>
+                        <p class="card-text">3.機能復甦的方案</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card card-large">
-                <div class="card-body">
-                    <h4 class="card-title">9.供養治療的方案</h4>
-                    <p class="card-text">1.供養治療的方案</p>
-                    <p class="card-text">2.供養治療的方案</p>
-                    <p class="card-text">3.供養治療的方案</p>
+                <div class="card card-large">
+                    <div class="card-body">
+                        <h4 class="card-title">9.供養治療的方案</h4>
+                        <p class="card-text">1.供養治療的方案</p>
+                        <p class="card-text">2.供養治療的方案</p>
+                        <p class="card-text">3.供養治療的方案</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card card-large">
-                <div class="card-body">
-                    <h4 class="card-title">10.耗氧治療的方案</h4>
-                    <p class="card-text">1.耗氧治療的方案</p>
-                    <p class="card-text">2.耗氧治療的方案</p>
-                    <p class="card-text">3.耗氧治療的方案</p>
+                <div class="card card-large">
+                    <div class="card-body">
+                        <h4 class="card-title">10.耗氧治療的方案</h4>
+                        <p class="card-text">1.耗氧治療的方案</p>
+                        <p class="card-text">2.耗氧治療的方案</p>
+                        <p class="card-text">3.耗氧治療的方案</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <a id="downloadimage1" href="#">下載 (12宮格頁面)</a>
     <script type="text/javascript">
     $(function() {
         console.log('onReady()');
-        // $('.small').matchHeight();
 
-        // $('#btn_same').click(function() {
-        // 	console.log('btn_same');
-        //     $('card-large').matchHeight();
-        // });
+        //下載檔案到local
+        function saveAs(uri, filename) {
+            var link = document.createElement('a');
+            if (typeof link.download === 'string') {
+                link.href = uri;
+                link.download = filename;
+                //Firefox requires the link to be in the body
+                document.body.appendChild(link);
+                //simulate click
+                link.click();
+                //remove the link when done
+                document.body.removeChild(link);
+            } else {
+                window.open(uri);
+            }
+        }
 
-        // $(window).resize(function() {
-        //     console.log('resize');
-        //     $('.small').matchHeight();
-        // });
+
+        $("#downloadimage1").on('click', function() {
+            console.log('onclick');
+            html2canvas(document.body).then(function(canvas) {
+                saveAs(canvas.toDataURL(), '12宮格頁面.png');
+            });
+            // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
+            //     saveAs(canvas.toDataURL(), '詳細頁面.png');
+            // });
+        });
 
         var resizeTimer;
 
         $(window).on('resize', function(e) {
-        	console.log('resize timer');
+            console.log('resize timer');
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
-            	console.log('resize -----------------------');
-            	// $('.small').matchHeight();
+                console.log('resize -----------------------');
+                // $('.small').matchHeight();
                 // Run code here, resizing has "stopped"
 
             }, 250);
