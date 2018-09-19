@@ -6,20 +6,25 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
     $(function() {
-        var Vehicles = [
-            { InStock: 12, Brand: "Oldsmobile", Year: "2006-2008" },
-            { InStock: 3, Brand: "Pontiac", Year: "2008-2010" },
-            { InStock: 5, Brand: "Buick", Year: "2009-2010" },
-            { InStock: 53, Brand: "Cadillac", Year: "2011-2013" },
-            { InStock: 12, Brand: "Holden", Year: "2004-2006" },
-            { InStock: 53, Brand: "Saturn", Year: "2009-2013" },
-            { InStock: 47, Brand: "GMC", Year: "2007-2008" }
-        ];
-        Vehicles = Vehicles.sort(function(a, b) {
-            return a.InStock > b.InStock ? 1 : -1;
-        });
 
-        console.log('Vehicles='+JSON.stringify(Vehicles));
+        array = [
+        	{ score: 1002, sort: 2 },
+            { score: 1000, sort: 4 },
+            { score: 1001, sort: 5 },
+            { score: 1001, sort: 0 },
+            { score: 1001, sort: 3 },
+            { score: 1001, sort: 1 }
+        ];
+
+        //先排序A (大到小)，在排序B(小到大)
+        array.sort(function(a, b) {
+            function cmp(x, y) {
+                return x > y ? 1 : (x < y ? -1 : 0);
+            }
+            return cmp(b.score, a.score) || cmp(a.sort, b.sort);
+        });	
+
+        console.log('array=' + JSON.stringify(array));
     });
     </script>
 </head>

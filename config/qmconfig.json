@@ -1,9 +1,11 @@
 {
-  "Type_1_9": {
+  "format_B_type1": {
+    "MEMO": "1.「format_B_type1」計算公式B-1,B-2使用; 2.「compare」= 資格符合分數最小值; 3「compareFormulaA」= 判斷是否顯示「運動處方」",
+    "compare" : 5,
+    "compareFormulaA" : 5,
     "session": [
       {
-        "title": "供給性缺氧",
-        "1848259859": {"title": "多利用抽風機、電風扇幫助空間換氣"},
+        "MEMO": "供給性缺氧",
         "question": [
           {
             "qid": "1848259859",
@@ -23,7 +25,7 @@
         ]
       },
       {
-        "title": "耗損性缺氧",
+        "MEMO": "耗損性缺氧",
         "question": [
           {
             "qid": "842487678",
@@ -32,7 +34,7 @@
           }
         ]
       }
-    ],
+    ]
     
   },
   "Type_1_10": [
