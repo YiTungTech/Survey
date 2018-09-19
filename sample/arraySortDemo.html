@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        var Vehicles = [
+            { InStock: 12, Brand: "Oldsmobile", Year: "2006-2008" },
+            { InStock: 3, Brand: "Pontiac", Year: "2008-2010" },
+            { InStock: 5, Brand: "Buick", Year: "2009-2010" },
+            { InStock: 53, Brand: "Cadillac", Year: "2011-2013" },
+            { InStock: 12, Brand: "Holden", Year: "2004-2006" },
+            { InStock: 53, Brand: "Saturn", Year: "2009-2013" },
+            { InStock: 47, Brand: "GMC", Year: "2007-2008" }
+        ];
+        Vehicles = Vehicles.sort(function(a, b) {
+            return a.InStock > b.InStock ? 1 : -1;
+        });
+
+        console.log('Vehicles='+JSON.stringify(Vehicles));
+    });
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
