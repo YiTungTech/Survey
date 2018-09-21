@@ -6,12 +6,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/js.cookie.js"></script>
     <script src="js/html2canvas.js"></script>
+    <script src="js/formula.js"></script>
     <script type="text/javascript">
     var gFormID = '1FAIpQLSf61A3kcoDVT929bta3X01AMaz4ieTDYwL2Ehz9FoHVuaIVnw'; //google 表單ID [for test CopyDown + Gmerge 版本 (Responses)]
     var gSheetParam = {}; //google sheet所需要的參數
 
     $(function() {
-
+        calculateAdvisement_111();
         console.log('start()');
         var config; //json格式的config設定檔
         var qmconfig; //json格式的question mapping設定檔
@@ -219,25 +220,25 @@
 
             //todo 取出分數>5的題目，放到陣列
 
-            $.each(qmconfig.format_B_type1.session, function(i, item_session) {
-
+            $.each(qmconfig.B_typeA.session, function(i, item_session) {
                 uiSingleAdvisementArray = [];
+                
+
                 //是否需要使用「運動處方」
-                var isNeedExercise = uiValue[i] > qmconfig.format_B_type1.compareFormulaA;
+                var isNeedExercise = uiValue[i] > qmconfig.B_typeA.B_typeA1_exercise;
 
                 $.each(item_session.question, function(j, item_question) {
                     var score = parseInt($.getUrlVar(item_question.qid));
                     score = valueToScore(score);
-                    // console.log('item_question score=' + score); 
-
-
-                    if (score > qmconfig.format_B_type1.compare) {
+                    // console.log('item_question score=' + score);
+                    //分數大於config設定, 預設5 
+                    if (score >= qmconfig.B_typeA.B_typeA1_compare) {
                         //符合條件，加入陣列
                         uiSingleAdvisementArray.push(item_question);
                     }
                 });
 
-                // console.log('排序前=' + JSON.stringify(uiSingleAdvisementArray));
+                console.log('排序前=' + JSON.stringify(uiSingleAdvisementArray));
                 // 排序
                 //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。
                 //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
@@ -250,10 +251,53 @@
                     return cmp(scoreB, scoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
                 });
 
-                // console.log('排序後=' + JSON.stringify(uiSingleAdvisementArray));
+                console.log('排序後=' + JSON.stringify(uiSingleAdvisementArray));
+
+
+                $.each(uiSingleAdvisementArray, function(sIndex, item_singleadvisement){
+                    uiSingleAdvisementArray.push(item_singleadvisement.title);
+                });
+
 
                 if (isNeedExercise) {
-                    //todo 計算運動處方
+                    //取得運動處方陣列
+                    var uiExerciseArray = [];
+                    $.each(item_session.exercise, function(eIndex, item_exercise){
+                        uiExerciseArray.push(item_exercise);                        
+                    });
+
+                    console.log('排序前 uiExerciseArray=' + JSON.stringify(uiExerciseArray));
+                    //運動處方進行排序
+                    //1. qidGroup內所有題目得到分數累加，由大到小排序。
+                    //2. 如果1.分數一致，由Sort欄位排序。
+                    uiExerciseArray.sort(function(a, b) {
+                        function cmp(x, y) {
+                            return x > y ? 1 : (x < y ? -1 : 0); //等於的時候不要動
+                        }
+                        //取得加總後分數
+                        function sumScore(qidGroup) {
+                            var totalScore = 0;
+
+                            //將qidGroup內所有題目的分數
+                            //1. 換算成分數 2.進行加總
+                            $.each(qidGroup, function(qidIndex, item_qidGroup) {
+                                totalScore += valueToScore(parseInt($.getUrlVar(item_qidGroup.qid)));
+                            });
+                            return totalScore;
+                        }
+
+                        var sumScoreA = sumScore(a.qidGroup);
+                        var sumScoreB = sumScore(b.qidGroup);
+                        // console.log('由大到小排序.  sumScoreA=' + sumScoreA +' sumScoreB='+sumScoreB);                        
+                        return cmp(sumScoreB, sumScoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
+                    });
+                    console.log('排序後 uiExerciseArray=' + JSON.stringify(uiExerciseArray));
+
+                    //todo 如果uiExerciseArray len==0，就會爆炸
+
+                    uiAdvisementArray.push(uiExerciseArray[0].title);
+                }else {
+
                 }
 
                 //符合條件的object

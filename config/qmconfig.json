@@ -1,8 +1,8 @@
 {
-  "format_B_type1": {
-    "MEMO": "1.「format_B_type1」計算公式B-1,B-2使用; 2.「compare」= 資格符合分數最小值; 3「compareFormulaA」= 判斷是否顯示「運動處方」",
-    "compare" : 5,
-    "compareFormulaA" : 5,
+  "B_typeA": {
+    "MEMO": "1.「B_typeA」計算公式B-1,B-2使用; 2.「B_typeA1_compare」= 資格符合分數最小值; 3「B_typeA1_exercise」= 判斷是否顯示「運動處方」",
+    "B_typeA1_compare": 5,
+    "B_typeA1_exercise": 2,
     "session": [
       {
         "MEMO": "供給性缺氧",
@@ -22,6 +22,29 @@
             "title": "練習「以口吸氣，鼻用力呼氣」的深呼吸運動",
             "sort": 2
           }
+        ],
+        "exercise": [
+          {
+            "qidGroup": [
+              {
+                "qid": "1848259859"
+              },
+              {
+                "qid": "1221090849"
+              }
+            ],
+            "title": "加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。",
+            "sort": 3
+          },
+          {
+            "qidGroup": [
+              {
+                "qid": "299261106"
+              }
+            ],
+            "title": "進行脊椎、豎脊肌伸展運動。",
+            "sort": 1
+          }
         ]
       },
       {
@@ -32,10 +55,19 @@
             "title": "保持正向心態，多參與社交與公益。",
             "sort": 4
           }
+        ],"exercise": [
+          {
+            "qidGroup": [
+              {
+                "qid": "842487678"
+              }
+            ],
+            "title": "紓壓打擊運動可緩減情緒緊繃。",
+            "sort": 2
+          }
         ]
       }
     ]
-    
   },
   "Type_1_10": [
     
