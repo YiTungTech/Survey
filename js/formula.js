@@ -107,27 +107,16 @@ function ScoreToWording_Type_1_1(session, value) {
 //計算
 //1. -----B_typeA----- B-1-1,B-1-2,B-1-3 / B-2-1,B-2-2,B-2-3
 function calculate_B_typeA(qmconfig) {
-    console.log('calculateAdvisement_life()');
-    //todo 取得mapping question
+    console.log('calculate_B_typeA()');
+
+    var uiResult = [];
 
 
-    // var arr = {
-
-    // name: [],
-
-    // data:[]
-
-    // };
-
-
-    var uiAdvisementArray = [];
-    var uiSingleAdvisementArray = [];
-    var uiExerciseArray = [];
     //todo 取出分數>5的題目，放到陣列
     $.each(qmconfig.B_typeA.session, function(i, item_session) {
-        uiAdvisementArray = [];
-        uiSingleAdvisementArray = [];
-        uiExerciseArray = [];
+        var uiAdvisementArray = [];
+        var uiSingleAdvisementArray = [];
+        var uiExerciseArray = [];
         // var uiTypeB = {};
 
         //是否需要使用「運動處方」
@@ -158,7 +147,7 @@ function calculate_B_typeA(qmconfig) {
             return cmp(scoreB, scoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
         });
 
-        console.log('「生活型態建議」排序後=' + JSON.stringify(uiSingleAdvisementArray));
+        // console.log('「生活型態建議」排序後=' + JSON.stringify(uiSingleAdvisementArray));//「生活型態建議」排序後=[{"qid":"299261106","title":"練習「以口吸氣，鼻用力呼氣」的深呼吸運動","sort":2},{"qid":"1848259859","title":"多利用抽風機、電風扇幫助空間換氣","sort":9},{"qid":"1221090849","title":"增加氧源，栽植室內盆栽","sort":10}]
 
         if (isNeedExercise) {
             //取得運動處方陣列
@@ -192,7 +181,7 @@ function calculate_B_typeA(qmconfig) {
                 // console.log('由大到小排序.  sumScoreA=' + sumScoreA +' sumScoreB='+sumScoreB);                        
                 return cmp(sumScoreB, sumScoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
             });
-            console.log('「運動處方建議」 排序後=' + JSON.stringify(uiExerciseArray));
+            // console.log('「運動處方建議」 排序後=' + JSON.stringify(uiExerciseArray));//「運動處方建議」 排序後=[{"qidGroup":[{"qid":"1848259859"},{"qid":"1221090849"}],"title":"加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。","sort":3},{"qidGroup":[{"qid":"299261106"}],"title":"進行脊椎、豎脊肌伸展運動。","sort":1}]
         }
 
         //將uiSingleAdvisementArray賽入 array
@@ -208,25 +197,6 @@ function calculate_B_typeA(qmconfig) {
             uiTypeB.title = '「生活型態建議」' + item_singleadvisement.title;
             uiAdvisementArray.push(uiTypeB);
 
-
-            // uiSingleAdvisementArray.push(item_singleadvisement.title);
-
-            // if (sIndex == 2 && isNeedExercise && uiExerciseArray.length > 0) {
-            //     var uiTypeB = {};
-            //     uiTypeB.title = '「運動處方建議」' + uiExerciseArray[0].title;
-            //     uiAdvisementArray.push(uiTypeB);
-            // } else {
-            //     var uiTypeB = {};
-            //     uiTypeB.title = '「生活型態建議」' + item_singleadvisement.title;
-            //     uiAdvisementArray.push(uiTypeB);
-            // }
-
-            // if (sIndex == 3) {
-            //     //停止增加message
-            //     console.log('end');
-            //     return;
-            // }
-
         });
 
         if (isNeedExercise && uiExerciseArray.length > 0) {
@@ -234,40 +204,11 @@ function calculate_B_typeA(qmconfig) {
             uiTypeB.title = '「運動處方建議」' + uiExerciseArray[0].title;
             uiAdvisementArray.push(uiTypeB);
         }
-
-
-        console.log('session=' + i + '「UI要顯示的文字」=' + JSON.stringify(uiAdvisementArray));
-        //符合條件的object
-        // console.log('uiAdvisementArray=' + JSON.stringify(uiAdvisementArray));
-
-
-
-        // typeB.dtitle = '這是Dtitle';
-
-        // function typeB(title,detail) {
-        //     this.title = title;
-        //     this.detail = detail;
-        // }
-
-        // console.log('typeB=' + typeB );        
-
-
-
-
-
-
+        uiResult.push(uiAdvisementArray);
     });
 
-    //符合條件的object
-    // console.log('uiAdvisementArray=' + JSON.stringify(uiAdvisementArray));
-
-    return uiAdvisementArray;
-    //todo sort
-
-    //判斷是否使用運動處方，取得供指數 > 2，則使用
-
-    //取出項目
-
+    console.log('「最終uiResult」=' + JSON.stringify(uiResult)); //「uiResult」=[[{"title":"「生活型態建議」練習「以口吸氣，鼻用力呼氣」的深呼吸運動"},{"title":"「生活型態建議」多利用抽風機、電風扇幫助空間換氣"},{"title":"「運動處方建議」加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。"}],[{"title":"「運動處方建議」紓壓打擊運動可緩減情緒緊繃。"}]]
+    return uiResult;
 }
 
 //計算
@@ -283,7 +224,6 @@ function calculateAdvisement() {
             uiAdvisement = "顯示供1建ＷＯＲＤＩＮＧ";
             break;
         }
-
     }
 
     //-----update UI-----
