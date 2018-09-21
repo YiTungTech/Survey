@@ -96,8 +96,10 @@
             console.log('calculate()');
             calculateSingleAverage_Type(config);
             var B_typeA =  calculate_B_typeA(qmconfig);
+            var B_typeB =  calculate_B_typeB(qmconfig);
 
             updateUI(B_typeA);
+            updateUI_B_typeB(B_typeB);
         }
 
         function updateUI(B_typeA){
@@ -117,7 +119,22 @@
             });
         }
 
-        
+        function updateUI_B_typeB(B_typeB){
+            $.each($('.ui_B_3'), function(index,  data){
+                var data_B_3 = B_typeB[0];
+                if ((index >= data_B_3.length)) return;//不符合長度
+                //todo 之後title跟detail要分開
+                $(this).append(data_B_3[index].title+' <p> '+data_B_3[index].detail +'</p');
+            });
+
+            $.each($('.ui_B_4'), function(index,  data){
+                var ui_B_4 = B_typeB[1];
+                if ((index >= ui_B_4.length)) return;//不符合長度
+                //todo 之後title跟detail要分開
+                $(this).append(ui_B_4[index].title+' <p> '+ui_B_4[index].detail +'</p');
+            });
+
+        }
 
         //todo: 截圖功能先不用在這裡寫 (demo已經有寫了)
 
@@ -177,6 +194,14 @@
     <p class="ui_B_2">B-2-1：</p>
     <p class="ui_B_2">B-2-2：</p>
     <p class="ui_B_2">B-2-3：</p>
+
+
+    <p class="ui_B_3">B-3-1：</p>
+    <p class="ui_B_3">B-3-2：</p>
+    <p class="ui_B_3">B-3-3：</p>
+    <p class="ui_B_4">B-4-1：</p>
+    <p class="ui_B_4">B-4-2：</p>
+    <p class="ui_B_4">B-4-3：</p>
 
     <a id="back" href="qu.html">重新填問卷</a>
     <a id="downloadimage" href="#">Download</a>

@@ -190,13 +190,13 @@ function calculate_B_typeA(qmconfig) {
                 return;
             }
             //todo title 「生活型態建議」要拿掉
-            tempArray.push(new DataTypeB('「生活型態建議」'+item_singleadvisement.title,item_singleadvisement.detail));
+            tempArray.push(new DataTypeB('「生活型態建議」' + item_singleadvisement.title, item_singleadvisement.detail));
 
         });
 
         if (isNeedExercise && tempExerciseArray.length > 0) {
-        	//todo title 「運動處方建議」要拿掉
-            tempArray.push(new DataTypeB('「運動處方建議」'+tempExerciseArray[0].title,tempExerciseArray[0].detail));
+            //todo title 「運動處方建議」要拿掉
+            tempArray.push(new DataTypeB('「運動處方建議」' + tempExerciseArray[0].title, tempExerciseArray[0].detail));
         }
         uiResult.push(tempArray);
     });
@@ -210,6 +210,37 @@ function DataTypeB(title, datail) {
     this.title = title;
     this.detail = datail;
 }
+
+//1. -----B_typeB----- B-3-1,B-3-2,B-3-3 / B-4-1,B-4-2,B-4-3 / B-5-1,B-5-2,B-5-3
+function calculate_B_typeB(qmconfig) {
+    console.log('calculate_B_typeB()');
+    var uiResult = [];
+    // console.log('uiValue='+JSON.stringify(uiValue));
+
+    
+    
+
+
+    //each session
+    $.each(qmconfig.B_typeB.session, function(sIndex, item_session) {
+    	var tempArray = []; //暫存存放
+
+    	console.log('item_session.food.title=' + item_session.food.title);
+    	var isNeedFood = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_food;
+    	var isNeedExercise = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_exercise;
+        if (isNeedFood) {tempArray.push(new DataTypeB(item_session.food.title, item_session.food.detail));}
+        if (isNeedExercise) {tempArray.push(new DataTypeB(item_session.exercise.title, item_session.exercise.detail));}
+
+
+        uiResult.push(tempArray);
+
+    });
+    console.log('uiResult=' + JSON.stringify(uiResult));
+
+    return uiResult;
+}
+
+
 
 //計算
 //1. -----Type_1_10----- 1.10供運?
