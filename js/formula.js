@@ -110,9 +110,9 @@ function calculate_B_typeA(qmconfig) {
 
     //each session
     $.each(qmconfig.B_typeA.session, function(i, item_session) {
-        var tempArray = [];//暫存存放
-        var tempLifeArray = [];//「生活型態建議」陣列
-        var tempExerciseArray = [];//「運動處方」陣列
+        var tempArray = []; //暫存存放
+        var tempLifeArray = []; //「生活型態建議」陣列
+        var tempExerciseArray = []; //「運動處方」陣列
 
         // 「生活型態建議」排序
         //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。
@@ -131,7 +131,7 @@ function calculate_B_typeA(qmconfig) {
         });
 
         // console.log('「生活型態建議」排序前=' + JSON.stringify(tempLifeArray));
-        
+
         tempLifeArray.sort(function(a, b) {
             function cmp(x, y) {
                 return x > y ? 1 : (x < y ? -1 : 0); //等於的時候不要動
@@ -163,9 +163,9 @@ function calculate_B_typeA(qmconfig) {
                 function cmp(x, y) {
                     return x > y ? 1 : (x < y ? -1 : 0); //等於的時候不要動
                 }
-                
+
                 function sumScore(qidGroup) {
-                	//【排序規則一】(模組)分數換算
+                    //【排序規則一】(模組)分數換算
                     //【排序規則一】問題1~4換算出的分數相加
                     var totalScore = 0;
                     $.each(qidGroup, function(qidIndex, item_qidGroup) {
@@ -189,23 +189,26 @@ function calculate_B_typeA(qmconfig) {
                 //第3項需要顯示「運動處方建議」，因此不增加「生活型態建議」
                 return;
             }
-
-            var uiTypeB = {};
-            uiTypeB.title = '「生活型態建議」' + item_singleadvisement.title;
-            tempArray.push(uiTypeB);
+            //todo title 「生活型態建議」要拿掉
+            tempArray.push(new DataTypeB('「生活型態建議」'+item_singleadvisement.title,item_singleadvisement.detail));
 
         });
 
         if (isNeedExercise && tempExerciseArray.length > 0) {
-            var uiTypeB = {};
-            uiTypeB.title = '「運動處方建議」' + tempExerciseArray[0].title;
-            tempArray.push(uiTypeB);
+        	//todo title 「運動處方建議」要拿掉
+            tempArray.push(new DataTypeB('「運動處方建議」'+tempExerciseArray[0].title,tempExerciseArray[0].detail));
         }
         uiResult.push(tempArray);
     });
 
+
     console.log('「uiResult」=' + JSON.stringify(uiResult)); //「uiResult」=[[{"title":"「生活型態建議」練習「以口吸氣，鼻用力呼氣」的深呼吸運動"},{"title":"「生活型態建議」多利用抽風機、電風扇幫助空間換氣"},{"title":"「運動處方建議」加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。"}],[{"title":"「運動處方建議」紓壓打擊運動可緩減情緒緊繃。"}]]
     return uiResult;
+}
+
+function DataTypeB(title, datail) {
+    this.title = title;
+    this.detail = datail;
 }
 
 //計算

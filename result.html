@@ -104,13 +104,15 @@
             $.each($('.ui_B_1'), function(index,  data){
                 var data_B_1 = B_typeA[0];
                 if ((index >= data_B_1.length)) return;//不符合長度
-                $(this).append(data_B_1[index].title);
+                //todo 之後title跟detail要分開
+                $(this).append(data_B_1[index].title+' <p> '+data_B_1[index].detail +'</p');
             });
 
             $.each($('.ui_B_2'), function(index,  data){
                 var data_B_2 = B_typeA[1];
                 if ((index >= data_B_2.length)) return;
-                $(this).append(data_B_2[index].title);
+                //todo 之後title跟detail要分開
+                $(this).append(data_B_2[index].title+' <p> '+data_B_2[index].detail +'</p');
                 
             });
         }
