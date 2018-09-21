@@ -95,11 +95,24 @@
         function calculate() {
             console.log('calculate()');
             calculateSingleAverage_Type(config);
-            calculate_B_typeA(qmconfig);
+            var B_typeA =  calculate_B_typeA(qmconfig);
 
+            updateUI(B_typeA);
+        }
 
-            //send request to google sheet
-            // gSheetRequestParam();   //todo: 測試先不送request
+        function updateUI(B_typeA){
+            $.each($('.ui_B_1'), function(index,  data){
+                var data_B_1 = B_typeA[0];
+                if ((index >= data_B_1.length)) return;//不符合長度
+                $(this).append(data_B_1[index].title);
+            });
+
+            $.each($('.ui_B_2'), function(index,  data){
+                var data_B_2 = B_typeA[1];
+                if ((index >= data_B_2.length)) return;
+                $(this).append(data_B_2[index].title);
+                
+            });
         }
 
         
@@ -156,9 +169,12 @@
     <p id="Type_1_2_1">耗評：</p>
     <br>
     <p>----------------------</p>
-    <p name="B_1">B-1-1：</p>
-    <p name="B_1">B-1-2：</p>
-    <p name="B_1">B-1-3：</p>
+    <p class="ui_B_1">B-1-1：</p>
+    <p class="ui_B_1">B-1-2：</p>
+    <p class="ui_B_1">B-1-3：</p>
+    <p class="ui_B_2">B-2-1：</p>
+    <p class="ui_B_2">B-2-2：</p>
+    <p class="ui_B_2">B-2-3：</p>
 
     <a id="back" href="qu.html">重新填問卷</a>
     <a id="downloadimage" href="#">Download</a>
