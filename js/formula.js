@@ -119,12 +119,13 @@ function calculate_B_typeA(qmconfig) {
         //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
 
         //取得所有「生活型態建議」
+        var isNeedQuestion = qmconfig.B_typeA.B_typeA1_compare;
         $.each(item_session.question, function(j, item_question) {
             var score = parseInt($.getUrlVar(item_question.qid));
             score = valueToScore(score);
             // console.log('item_question score=' + score);
             //分數大於config設定, 預設5 
-            if (score >= qmconfig.B_typeA.B_typeA1_compare) {
+            if (score >= isNeedQuestion) {
                 //符合條件，加入陣列
                 tempLifeArray.push(item_question);
             }
@@ -202,7 +203,7 @@ function calculate_B_typeA(qmconfig) {
     });
 
 
-    console.log('「uiResult」=' + JSON.stringify(uiResult)); //「uiResult」=[[{"title":"「生活型態建議」練習「以口吸氣，鼻用力呼氣」的深呼吸運動"},{"title":"「生活型態建議」多利用抽風機、電風扇幫助空間換氣"},{"title":"「運動處方建議」加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。"}],[{"title":"「運動處方建議」紓壓打擊運動可緩減情緒緊繃。"}]]
+    // console.log('「uiResult」=' + JSON.stringify(uiResult)); //「uiResult」=[[{"title":"「生活型態建議」練習「以口吸氣，鼻用力呼氣」的深呼吸運動"},{"title":"「生活型態建議」多利用抽風機、電風扇幫助空間換氣"},{"title":"「運動處方建議」加強鍛鍊胸肌、腹肌、上背肌等呼吸肌群。"}],[{"title":"「運動處方建議」紓壓打擊運動可緩減情緒緊繃。"}]]
     return uiResult;
 }
 
@@ -217,25 +218,62 @@ function calculate_B_typeB(qmconfig) {
     var uiResult = [];
     // console.log('uiValue='+JSON.stringify(uiValue));
 
-    
-    
-
-
     //each session
     $.each(qmconfig.B_typeB.session, function(sIndex, item_session) {
     	var tempArray = []; //暫存存放
+    	var tempLifeArray = []; //「生活型態建議」陣列
 
-    	console.log('item_session.food.title=' + item_session.food.title);
+    	//【排序規則一】飲食處方第一優先
+    	//【排序規則二】運動處方第二順位
     	var isNeedFood = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_food;
     	var isNeedExercise = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_exercise;
         if (isNeedFood) {tempArray.push(new DataTypeB(item_session.food.title, item_session.food.detail));}
         if (isNeedExercise) {tempArray.push(new DataTypeB(item_session.exercise.title, item_session.exercise.detail));}
 
 
+        //取得所有「生活型態建議」
+        var isNeedQuestion = qmconfig.B_typeB.B_typeB1_compare;
+        $.each(item_session.question, function(qIndex, item_question) {
+            var score = parseInt($.getUrlVar(item_question.qid));
+            score = valueToScore(score);
+            // console.log('item_question score=' + score);
+            
+            if (score >= isNeedQuestion) {
+                //分數大於config設定，符合條件，加入陣列
+                tempLifeArray.push(item_question);
+            }
+        });
+
+        console.log(item_session.MEMO+'「生活型態建議」排序前=' + JSON.stringify(tempLifeArray));
+		// 「生活型態建議」排序	
+        //【排序規則三】生活型態建議依照各題填答結果換算出的分數高低，由高至低排序。
+        //【排序規則四】生活型態建議同分時，依照各建議優先順序設定排序。(參考表5欄位「排序規則4」)
+        tempLifeArray.sort(function(a, b) {
+            function cmp(x, y) {
+                return x > y ? 1 : (x < y ? -1 : 0); //等於的時候不要動
+            }
+            var scoreA = valueToScore(parseInt($.getUrlVar(a.qid)));
+            var scoreB = valueToScore(parseInt($.getUrlVar(b.qid)));
+            return cmp(scoreB, scoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
+        });
+
+        console.log(item_session.MEMO+'「生活型態建議」排序後=' + JSON.stringify(tempLifeArray));//「生活型態建議」排序後=[{"qid":"299261106","title":"練習「以口吸氣，鼻用力呼氣」的深呼吸運動","sort":2},{"qid":"1848259859","title":"多利用抽風機、電風扇幫助空間換氣","sort":9},{"qid":"1221090849","title":"增加氧源，栽植室內盆栽","sort":10}]
+
+        //將tempLifeArray賽入 array
+        $.each(tempLifeArray, function(sIndex, item_tempLift) {
+            if (tempArray >= 3 ) {
+                //最多只取3項目
+                return;
+            }
+            //todo title 「生活型態建議」要拿掉
+            tempArray.push(new DataTypeB('「生活型態建議」' + item_tempLift.title, item_tempLift.detail));
+
+        });
+
         uiResult.push(tempArray);
 
     });
-    console.log('uiResult=' + JSON.stringify(uiResult));
+    // console.log('uiResult=' + JSON.stringify(uiResult));
 
     return uiResult;
 }
