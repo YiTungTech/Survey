@@ -198,6 +198,38 @@ function calculate_B_typeB(qmconfig) {
 }
 
 
+//1. -----C----- C-1,C-2
+function calculate_C(qmconfig) {
+	console.log('calculate_C()');
+    var uiResult = [];
+
+    //each session
+    $.each(qmconfig.C.session, function(sIndex, item_session) {
+        var tempArray = []; //暫存存放
+        var filterArray = []; 
+
+        var isNeedQuestion = qmconfig.C.C_compare;//過濾條件
+        //取得所有「自控建議」
+        filterArray = getFilterArray(item_session, isNeedQuestion);
+
+        //將filterArray賽入 array
+        $.each(filterArray, function(sIndex, item_filter) {
+            if (tempArray >= 3) {
+                //最多只取3項目
+                return;
+            }
+            tempArray.push(new DataTypeB(item_filter.title, item_filter.detail));
+
+        });
+
+        uiResult.push(tempArray);
+
+    });
+    // console.log('uiResult=' + JSON.stringify(uiResult));
+
+    return uiResult;
+}
+
 
 //--------------private --------------
 
@@ -208,6 +240,7 @@ session : {MEMO,exercise,qidGroup,sort}
 isNeedQuestion : 分數大於config設定，符合條件，加入陣列
 */
 function getExerciseArray(session, isNeedExercise) {
+	console.log('getExerciseArray()');
     var resultExerciseArray = []; //「運動處方建議」陣列
 
     if (isNeedExercise) {
@@ -249,29 +282,22 @@ function getExerciseArray(session, isNeedExercise) {
 }
 
 
+
+
+
 /**
-取得「生活型態建議」並排序
+1. 取得答題分數符合條件的題目 2.排序
 input
-session : {MEMO,question,sort}
-isNeedQuestion : 分數大於config設定，符合條件，加入陣列
+session 		: {MEMO,question,question.id,sort}
+isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 */
 function getQuestionArray(session, isNeedQuestion) {
-    var resultLifeArray = []; //「生活型態建議」陣列
-    //取得所有「生活型態建議」
+
+    var resultLifeArray = getFilterArray(session, isNeedQuestion); //取得符合資格陣列「生活型態建議」陣列
+
     // 「生活型態建議」排序
     //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。	
     //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
-    $.each(session.question, function(qIndex, item_question) {
-        var score = parseInt($.getUrlVar(item_question.qid));
-        score = valueToScore(score);
-        // console.log('item_question score=' + score);
-
-        if (score >= isNeedQuestion) {
-            //分數大於config設定，符合條件，加入陣列
-            resultLifeArray.push(item_question);
-        }
-    });
-
     // console.log(session.MEMO + '「生活型態建議」排序前=' + JSON.stringify(resultLifeArray));
     resultLifeArray.sort(function(a, b) {
         function cmp(x, y) {
@@ -284,4 +310,27 @@ function getQuestionArray(session, isNeedQuestion) {
 
     // console.log(session.MEMO + '「生活型態建議」排序後=' + JSON.stringify(resultLifeArray)); //「生活型態建議」排序後=[{"qid":"299261106","title":"練習「以口吸氣，鼻用力呼氣」的深呼吸運動","sort":2},{"qid":"1848259859","title":"多利用抽風機、電風扇幫助空間換氣","sort":9},{"qid":"1221090849","title":"增加氧源，栽植室內盆栽","sort":10}]
     return resultLifeArray;
+}
+
+/**
+取得答題分數符合條件的題目，並回傳陣列
+input
+session 		: {question,question.qid}
+isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
+*/
+function getFilterArray(session, condition) {
+	var filterArray = []; 
+
+    $.each(session.question, function(qIndex, item_question) {
+        var score = parseInt($.getUrlVar(item_question.qid));
+        score = valueToScore(score);
+        // console.log('item_question score=' + score);
+
+        if (score >= condition) {
+            //分數大於config設定，符合條件，加入陣列
+            filterArray.push(item_question);
+        }
+    });
+
+    return filterArray;
 }

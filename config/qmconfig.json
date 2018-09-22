@@ -77,7 +77,7 @@
     ]
   },
   "B_typeB": {
-    "MEMO": "1.「B_typeB1_food」【排序規則一】飲食處方第一優先; 2.「B_typeB1_exercise」【排序規則二】運動處方第二順位",
+    "MEMO": "1.「B_typeB1_food」【排序規則一】飲食處方第一優先，詳細設定在「food」 2.「B_typeB1_exercise」【排序規則二】運動處方第二順位;，詳細設定在「exercise」; 3. 【排序規則二】依照question排序" ,
     "B_typeB1_compare": 5,
     "B_typeB1_food": 6,
     "B_typeB1_exercise": 3,
@@ -116,6 +116,47 @@
             "qid": "842487678",
             "title": "[濕1]進行靠牆抬腳、小腿按摩",
             "detail": "進行小腿按摩，可幫助靜脈迴流。",
+            "sort": 1
+          }
+        ]
+      }
+    ]
+  }
+  ,
+  "C": {
+    "MEMO": "自控建議",
+    "C_compare": 5,
+    "session": [
+      {
+        "MEMO": "創造有利條件",
+        "question": [
+          {
+            "qid": "1848259859",
+            "title": "[創造1]排除不利因子，創造便利。",
+            "detail": "[自1]TBC",
+            "sort": 1
+          },
+          {
+            "qid": "1221090849",
+            "title": "[創造2]請週遭人給予正面鼓勵。",
+            "detail": "[自2]TBC。",
+            "sort": 2
+          },
+          {
+            "qid": "299261106",
+            "title": "[創造3]持續設定短期目標及獎勵(不可與目標矛盾)。",
+            "detail": "[自3]TBC。",
+            "sort": 3
+          }
+        ]
+      },
+      {
+        "MEMO": "聚焦內在目標",
+        "question": [
+          {
+            "qid": "842487678",
+            "title": "[聚焦1]問自己五個為什麼。",
+            "detail": "[聚焦1]TBC。",
             "sort": 1
           }
         ]
