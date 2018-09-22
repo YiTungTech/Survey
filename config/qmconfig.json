@@ -1,4 +1,45 @@
 {
+  "A": {
+    "MEMO": "1.",
+    "A_compare": [2,4,7,10],
+    "session": [
+      {
+        "MEMO": "供給性缺氧",
+
+        "question": [
+          {
+            "title": "您沒有供氧能力不足的現象。"
+          },
+          {
+            "title": "輕度供氧能力不足。"
+          },
+          {
+            "title": "供氧能力不佳，容易發生缺氧。"
+          },
+          {
+            "title": "嚴重的供氧障礙，經常性缺氧。"
+          }
+        ]
+      },
+      {
+        "MEMO": "耗損性缺氧",
+        "question": [
+          {
+            "title": "您沒有能量透支的現象。"
+          },
+          {
+            "title": "輕度能量透支。"
+          },
+          {
+            "title": "中度能量透支，消耗器官儲備。"
+          },
+          {
+            "title": "嚴重能量透支，易形成缺氧病灶。"
+          }
+        ]
+      }
+    ]
+  },
   "B_typeA": {
     "MEMO": "1.「B_typeA」計算公式B-1,B-2使用; 2.「B_typeA1_compare」= 資格符合分數最小值; 3「B_typeA1_exercise」= 判斷是否顯示「運動處方」",
     "B_typeA1_compare": 5,
@@ -61,7 +102,8 @@
             "detail": "為舒緩壓力或無助感，請多參與社交、與朋友交談，或做點小公益，協助保持正向心態。",
             "sort": 4
           }
-        ],"exercise": [
+        ],
+        "exercise": [
           {
             "qidGroup": [
               {
@@ -77,15 +119,21 @@
     ]
   },
   "B_typeB": {
-    "MEMO": "1.「B_typeB1_food」【排序規則一】飲食處方第一優先，詳細設定在「food」 2.「B_typeB1_exercise」【排序規則二】運動處方第二順位;，詳細設定在「exercise」; 3. 【排序規則二】依照question排序" ,
+    "MEMO": "1.「B_typeB1_food」【排序規則一】飲食處方第一優先，詳細設定在「food」 2.「B_typeB1_exercise」【排序規則二】運動處方第二順位;，詳細設定在「exercise」; 3. 【排序規則二】依照question排序",
     "B_typeB1_compare": 5,
     "B_typeB1_food": 6,
     "B_typeB1_exercise": 3,
     "session": [
       {
         "MEMO": "熱性體質",
-        "food" : {"title":"[熱food]多攝取綠豆、芹菜、苦瓜、梨、菊花茶","detail":"多攝取綠豆、芹菜、苦瓜、梨、菊花茶等涼性飲食，清涼解熱。"},
-        "exercise" : {"title":"[熱exercise]嘗試拉筋、伸展及低強度有氧運動","detail":"嘗試拉筋、伸展及低強度有氧運動，幫助代謝，舒緩助眠。"},
+        "food": {
+          "title": "[熱food]多攝取綠豆、芹菜、苦瓜、梨、菊花茶",
+          "detail": "多攝取綠豆、芹菜、苦瓜、梨、菊花茶等涼性飲食，清涼解熱。"
+        },
+        "exercise": {
+          "title": "[熱exercise]嘗試拉筋、伸展及低強度有氧運動",
+          "detail": "嘗試拉筋、伸展及低強度有氧運動，幫助代謝，舒緩助眠。"
+        },
         "question": [
           {
             "qid": "1848259859",
@@ -109,8 +157,14 @@
       },
       {
         "MEMO": "溼性體質",
-        "food" : {"title":"[濕food]多攝取木耳、番茄、醋、洋蔥、檸檬水","detail":"多攝取木耳、番茄、醋、洋蔥、檸檬水，以緩解濕性症狀。。"},
-        "exercise" : {"title":"[濕fexercise]鍛鍊核心及下肢肌群","detail":"鍛鍊核心及下肢肌群可強化血液循環。"},
+        "food": {
+          "title": "[濕food]多攝取木耳、番茄、醋、洋蔥、檸檬水",
+          "detail": "多攝取木耳、番茄、醋、洋蔥、檸檬水，以緩解濕性症狀。。"
+        },
+        "exercise": {
+          "title": "[濕fexercise]鍛鍊核心及下肢肌群",
+          "detail": "鍛鍊核心及下肢肌群可強化血液循環。"
+        },
         "question": [
           {
             "qid": "842487678",
@@ -121,8 +175,7 @@
         ]
       }
     ]
-  }
-  ,
+  },
   "C": {
     "MEMO": "自控建議",
     "C_compare": 5,

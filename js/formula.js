@@ -6,15 +6,12 @@
 //3. -----A-[1-5]-[2]
 var uiValue = []; //要呈現在UI，各項「分數」，其它method會用到，所以放public
 
-function calculateSingleAverage_Type(config) {
-
-
-
-    console.log('calculateSingleAverage_Type()');
+function calculate_A(config, qmconfig) {
+    console.log('calculate_A()');
 
 
     var resultArray = [];
-    var uiWording = []; 	//要呈現在UI，各項「wording」
+    // var uiWording = []; 	//要呈現在UI，各項「wording」
     var uiTotalValue; 		//D-1要呈現在UI，總「分數」
 
     var totalScoreArray = [];  		//所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
@@ -48,18 +45,22 @@ function calculateSingleAverage_Type(config) {
 
     // console.log('uiValue=' + uiValue.toString());
 
-    //mapping文字
-    $.each(uiValue, function(i, value) {
+    //取得mapping文字
+    var compareScoreArray = qmconfig.A.A_compare;
+    $.each(uiValue, function(sIndex, value) {
 
-    	var wording = ScoreToWording_Type_1_1(i, uiValue[i]);
-    	
+    	var userScore = uiValue[sIndex];
+		$.each(compareScoreArray, function(mIndex, cScore) {
+			if (userScore < cScore) {
+				var wording = qmconfig.A.session[sIndex].question[mIndex].title;
+				resultArray.push(new DataTypeB(uiValue[sIndex],wording));
 
-    	resultArray.push(new DataTypeB(uiValue[i],wording));
-        uiWording.push(ScoreToWording_Type_1_1(i, uiValue[i]));
+				return false;
+			}
+		});
     });
-    // console.log('uiWording=' + uiWording.toString());
 
-    //-----換算成「總」Type_0_4 -----
+    //計算D-1
     var tempValueMax = Math.max.apply(null, totalScoreArray);
     var tempValueAverage = (totalSumScore / config.session.length);
     //1.綜合平均值 2.取4捨5入到小數第1位
@@ -70,24 +71,6 @@ function calculateSingleAverage_Type(config) {
 
     resultArray.push(new DataTypeB(uiTotalValue,"全部的評語"));
 
-    // console.log('uiTotalValue=' + uiTotalValue);
-    //-----換算成「總」Type_0_4 -----
-
-
-
-    //-----update UI-----
-    // $.each(uiValue, function(i, value) {
-    //     $('#Type_1_1_' + i).append(value);
-    // });
-
-    // $.each(uiWording, function(i, value) {
-    //     $('#Type_1_2_' + i).append(value);
-    // });
-
-    // $('#Type_1_0_4').append(uiTotalValue);
-    //-----update UI-----
-
-    // console.log('test='+JSON.stringify(resultArray));
     return resultArray;
 
 }
@@ -107,25 +90,6 @@ function valueToScore(value) {
             return 10;
     }
 }
-
-//取得wording ----- Type_1_1 ----- 1.2供評
-function ScoreToWording_Type_1_1(session, value) {
-    if (session == 0) {
-        if (2 >= value) { return "您沒有供氧能力不足的現象。"; }
-        if (4 >= value && value > 2) { return "輕度供氧能力不足。"; }
-        if (7 >= value && value > 4) { return "供氧能力不佳，容易發生缺氧。"; }
-        if (10 >= value && value > 7) { return "嚴重的供氧障礙，經常性缺氧。"; }
-    }
-    if (session == 1) {
-        if (2 >= value) { return "您沒有能量透支的現象。"; }
-        if (4 >= value && value > 2) { return "輕度能量透支。"; }
-        if (7 >= value && value > 4) { return "中度能量透支，消耗器官儲備。"; }
-        if (10 >= value && value > 7) { return "嚴重能量透支，易形成缺氧病灶。"; }
-    }
-
-}
-
-
 
 
 //計算
@@ -154,7 +118,7 @@ function calculate_B_typeA(qmconfig) {
 
             if (sIndex >= 2 && isNeedExercise) {
                 //第3項需要顯示「運動處方建議」，因此不增加「生活型態建議」
-                return;
+                return false;
             }
             //todo title 「生活型態建議」要拿掉
             tempArray.push(new DataTypeB('「生活型態建議」' + item_singleadvisement.title, item_singleadvisement.detail));
@@ -200,7 +164,7 @@ function calculate_B_typeB(qmconfig) {
         $.each(tempLifeArray, function(sIndex, item_tempLift) {
             if (tempArray >= 3) {
                 //最多只取3項目
-                return;
+                return false;
             }
             //todo title 「生活型態建議」要拿掉
             tempArray.push(new DataTypeB('「生活型態建議」' + item_tempLift.title, item_tempLift.detail));
@@ -234,7 +198,7 @@ function calculate_C(qmconfig) {
         $.each(filterArray, function(sIndex, item_filter) {
             if (tempArray >= 3) {
                 //最多只取3項目
-                return;
+                return false;
             }
             tempArray.push(new DataTypeB(item_filter.title, item_filter.detail));
 
