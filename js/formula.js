@@ -8,15 +8,10 @@ var uiValue = []; //要呈現在UI，各項「分數」，其它method會用到�
 
 function calculate_A(config, qmconfig) {
     console.log('calculate_A()');
-
-
     var resultArray = [];
-    // var uiWording = []; 	//要呈現在UI，各項「wording」
     var uiTotalValue; 		//D-1要呈現在UI，總「分數」
-
     var totalScoreArray = [];  		//所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
     var totalSumScore = 0; 			//所有session分數加總 -> 為了取平均值 (將5大類分數累加)
-    
 
     $.each(config.session, function(i, item_session) {
         var scoreArray = []; 		//單一session所有問題，轉換成分數陣列	-> 為了取最大值
@@ -68,7 +63,7 @@ function calculate_A(config, qmconfig) {
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
 
 
-
+    //todo 總分的評語尚未處理
     resultArray.push(new DataTypeB(uiTotalValue,"全部的評語"));
 
     return resultArray;
