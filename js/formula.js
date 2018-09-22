@@ -1,39 +1,47 @@
 //--------------public --------------
 
 //計算
-//1. -----Type_0_4-----0.4總
-//2. -----Type_1_1-----1.1供
-//3. -----Type_1_2-----1.2供評
-var uiValue = []; //要呈現在UI，各項「分數」
+//1. -----D-1
+//2. -----A-[1-5]-[1]
+//3. -----A-[1-5]-[2]
+var uiValue = []; //要呈現在UI，各項「分數」，其它method會用到，所以放public
+
 function calculateSingleAverage_Type(config) {
+
+
+
     console.log('calculateSingleAverage_Type()');
-    var uiWording = []; //要呈現在UI，各項「wording」
-    var uiTotalValue; //要呈現在UI，總「分數」
-    var tempSumTotalValue = 0; //計算過程中暫存，將5大類分數累加
-    var tempTotalValues = [];
+
+
+    var resultArray = [];
+    var uiWording = []; 	//要呈現在UI，各項「wording」
+    var uiTotalValue; 		//D-1要呈現在UI，總「分數」
+
+    var totalScoreArray = [];  		//所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
+    var totalSumScore = 0; 			//所有session分數加總 -> 為了取平均值 (將5大類分數累加)
+    
 
     $.each(config.session, function(i, item_session) {
-        var valueArray = []; //所有的值
-        var sumValue = 0; //加總
+        var scoreArray = []; 		//單一session所有問題，轉換成分數陣列	-> 為了取最大值
+        var sumScore = 0;			//單一session所有問題的分數加總 		-> 為了取平均值
+
         $.each(item_session.question, function(j, item_question) {
             var score = valueToScore(parseInt(item_question.value));
-            sumValue += score;
-            valueArray.push(score);
+            sumScore += score;
+            scoreArray.push(score);
         });
 
         //最大值
-        var valueMax = Math.max.apply(null, valueArray);
-        // console.log('Type_1_1_' + i + '_最大值=' + valueMax);
+        var valueMax = Math.max.apply(null, scoreArray);
 
         //平均值
-        var valueAverage = sumValue / item_session.question.length;
-        // console.log('Type_1_1_' + i + '_平均值=' + valueAverage);
+        var valueAverage = sumScore / item_session.question.length;
 
         //1.綜合平均值 2.取4捨5入到小數第1位
         var temp = (valueMax + valueAverage) / 2;
         // console.log('temp=' + temp);
-        tempSumTotalValue += temp;
-        tempTotalValues.push(temp);
+        totalSumScore += temp;
+        totalScoreArray.push(temp);
         uiValue.push(Math.round(temp * 10) / 10);
 
     });
@@ -42,31 +50,45 @@ function calculateSingleAverage_Type(config) {
 
     //mapping文字
     $.each(uiValue, function(i, value) {
+
+    	var wording = ScoreToWording_Type_1_1(i, uiValue[i]);
+    	
+
+    	resultArray.push(new DataTypeB(uiValue[i],wording));
         uiWording.push(ScoreToWording_Type_1_1(i, uiValue[i]));
     });
     // console.log('uiWording=' + uiWording.toString());
 
     //-----換算成「總」Type_0_4 -----
-    var tempValueMax = Math.max.apply(null, tempTotalValues);
-    var tempValueAverage = (tempSumTotalValue / config.session.length);
+    var tempValueMax = Math.max.apply(null, totalScoreArray);
+    var tempValueAverage = (totalSumScore / config.session.length);
     //1.綜合平均值 2.取4捨5入到小數第1位
     uiTotalValue = (tempValueMax + tempValueAverage) / 2;
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
+
+
+
+    resultArray.push(new DataTypeB(uiTotalValue,"全部的評語"));
+
     // console.log('uiTotalValue=' + uiTotalValue);
     //-----換算成「總」Type_0_4 -----
 
+
+
     //-----update UI-----
-    $.each(uiValue, function(i, value) {
-        $('#Type_1_1_' + i).append(value);
-    });
+    // $.each(uiValue, function(i, value) {
+    //     $('#Type_1_1_' + i).append(value);
+    // });
 
-    $.each(uiWording, function(i, value) {
-        $('#Type_1_2_' + i).append(value);
-    });
+    // $.each(uiWording, function(i, value) {
+    //     $('#Type_1_2_' + i).append(value);
+    // });
 
-    $('#Type_1_0_4').append(uiTotalValue);
+    // $('#Type_1_0_4').append(uiTotalValue);
     //-----update UI-----
 
+    // console.log('test='+JSON.stringify(resultArray));
+    return resultArray;
 
 }
 
@@ -151,10 +173,6 @@ function calculate_B_typeA(qmconfig) {
     return uiResult;
 }
 
-function DataTypeB(title, datail) {
-    this.title = title;
-    this.detail = datail;
-}
 
 //1. -----B_typeB----- B-3-1,B-3-2,B-3-3 / B-4-1,B-4-2,B-4-3 / B-5-1,B-5-2,B-5-3
 function calculate_B_typeB(qmconfig) {
@@ -232,6 +250,12 @@ function calculate_C(qmconfig) {
 
 
 //--------------private --------------
+
+
+function DataTypeB(title, datail) {
+    this.title = title;
+    this.detail = datail;
+}
 
 /**
 取得「運動處方建議」並排序

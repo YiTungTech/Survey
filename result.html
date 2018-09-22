@@ -94,7 +94,7 @@
         //計算data
         function calculate() {
             console.log('calculate()');
-            calculateSingleAverage_Type(config);
+            var A = calculateSingleAverage_Type(config);
             var B_typeA =  calculate_B_typeA(qmconfig);
             var B_typeB =  calculate_B_typeB(qmconfig);
             var C =  calculate_C(qmconfig);
@@ -102,9 +102,23 @@
             updateUI(B_typeA);
             updateUI_B_typeB(B_typeB);
             updateUI_C(C);
+            updateUI_A(A);
+
+            console.log('A='+JSON.stringify(A));
         }
 
         //update UI
+
+        function updateUI_A(A){
+            $.each(A, function(index,  data){
+                var outputTitle = '#ui_A_'+(index+1)+'_1';
+                var outputDetail = '#ui_A_'+(index+1)+'_2';
+                var title = A[index].title;
+                var detail = A[index].detail;
+                $(outputTitle).append(title);
+                $(outputDetail).append(detail);
+            });
+        }
 
         function updateUI(B_typeA){
             $.each($('.ui_B_1'), function(index,  data){
@@ -202,36 +216,44 @@
 
 <body>
     <p id="version">version 2</p>
-    <p id="Type_1_0_4">總：</p>
-    <p id="Type_1_1_0">供：</p>
-    <p id="Type_1_2_0">供評：</p>
-    <br>
-    <p id="Type_1_1_1">耗：</p>
-    <p id="Type_1_2_1">耗評：</p>
+    
+    <p id="ui_A_1_1">供：</p>
+    <p id="ui_A_1_2">供評：</p>
+    <p id="ui_A_2_1">耗：</p>
+    <p id="ui_A_2_2">耗評：</p>
+    <p id="ui_A_3_1">熱：</p>
+    <p id="ui_A_3_2">熱評：</p>
+    <p id="ui_A_4_1">濕：</p>
+    <p id="ui_A_4_2">濕評：</p>
+    <p id="ui_A_5_1">寒：</p>
+    <p id="ui_A_5_2">寒評：</p>
+    <p id="ui_A_6_1">總：</p>
+    <p id="ui_A_6_1">總評：</p>
     <br>
     <p>----------------------</p>
     <p class="ui_B_1">B-1-1：</p>
     <p class="ui_B_1">B-1-2：</p>
     <p class="ui_B_1">B-1-3：</p>
+    <p>----------------------</p>
     <p class="ui_B_2">B-2-1：</p>
     <p class="ui_B_2">B-2-2：</p>
     <p class="ui_B_2">B-2-3：</p>
-
-
+    <p>----------------------</p>
     <p class="ui_B_3">B-3-1：</p>
     <p class="ui_B_3">B-3-2：</p>
     <p class="ui_B_3">B-3-3：</p>
     <p class="ui_B_4">B-4-1：</p>
     <p class="ui_B_4">B-4-2：</p>
     <p class="ui_B_4">B-4-3：</p>
-
+    <p>----------------------</p>
     <p class="ui_C_1">C-1-1：</p>
     <p class="ui_C_1">C-1-2：</p>
     <p class="ui_C_1">C-1-3：</p>
+    <p>----------------------</p>
     <p class="ui_C_2">C-2-1：</p>
     <p class="ui_C_2">C-2-2：</p>
     <p class="ui_C_2">C-2-3：</p>
-
+    <p>----------------------</p>
     <a id="back" href="contact.html">聯絡我</a>
     <a id="back" href="qu.html">重新填問卷</a>
     <a id="downloadimage" href="#">Download</a>
