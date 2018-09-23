@@ -63,34 +63,6 @@ function calculate_A(config, qmconfig) {
     return resultArray;
 }
 
-function calculate_D(qmconfig) {
-
-    //todo 總分的評語尚未處理 , 在這裡把D-[1-4]組起來，wording先寫在程式裡面。
-
-	console.log('calculate_D()');
-	var resultTitle = uiTotalValue;
-    var resultDatail = '';
-
-    //D-2
-    //根據分數，取得對應range文字wording
-    //耦合高，暫時維持現狀。
-    var compareArray = qmconfig.D.D_compare;
-    var target = resultTitle;
-    $.each(compareArray, function(mIndex, compare) {
-        if (target < compare) {
-            resultDatail += qmconfig.D.D_2[mIndex].title;
-            return false;
-        }
-    });
-
-    //D-3
-
-
-
-    return new DataTypeB(resultTitle, resultDatail);
-}
-
-
 
 //計算
 //1. -----B_typeA----- B-1-1,B-1-2,B-1-3 / B-2-1,B-2-2,B-2-3
@@ -212,6 +184,52 @@ function calculate_C(qmconfig) {
     return uiResult;
 }
 
+//1. -----C----- D-[1-4]
+function calculate_D(qmconfig) {
+
+    //todo 總分的評語尚未處理 , 在這裡把D-[1-4]組起來，wording先寫在程式裡面。
+
+	console.log('calculate_D()');
+	var resultTitle = uiTotalValue;//總分
+    var resultDatail = '';//總分建議
+    var scoreArray = uiValue;//各項分數
+
+    //D-2
+    //根據分數，取得對應range文字wording
+    //耦合高，暫時維持現狀。
+    var compareArray = qmconfig.D.D_compare;
+    var target = resultTitle;
+    $.each(compareArray, function(mIndex, compare) {
+        if (target < compare) {
+            resultDatail += qmconfig.D.D_2[mIndex].title;
+            return false;
+        }
+    });
+
+    //D-3
+    if (scoreArray[0] > scoreArray[1] && scoreArray[0] > 2) {
+    	resultDatail += qmconfig.D.D_3[0].title;
+    }else if (scoreArray[1] >= scoreArray[0] && scoreArray[1] > 2) {
+    	resultDatail += qmconfig.D.D_3[1].title;
+    }else if (scoreArray[0] < 2 && scoreArray[1] < 2) {
+    	resultDatail += qmconfig.D.D_3[2].title;
+    }else if (scoreArray[0] < 2 && scoreArray[1] < 2 && scoreArray[2] < 3 && scoreArray[3] < 3 && scoreArray[4] < 3) {
+    	resultDatail += qmconfig.D.D_3[3].title;
+    }
+
+    //D-4
+    if (scoreArray[2] > scoreArray[3] && scoreArray[2] > scoreArray[4] && scoreArray[2] > 3) {
+    	resultDatail += qmconfig.D.D_4[0].title;
+    }else if (scoreArray[3] > scoreArray[2] && scoreArray[3] > scoreArray[4] && scoreArray[3] > 3) {
+    	resultDatail += qmconfig.D.D_4[1].title;
+    }else if (scoreArray[4] > scoreArray[2] && scoreArray[4] > scoreArray[3] && scoreArray[4] > 3) {
+    	resultDatail += qmconfig.D.D_4[2].title;
+    }else {
+    	resultDatail += qmconfig.D.D_4[3].title;
+    }
+
+    return new DataTypeB(resultTitle, resultDatail);
+}
 
 //--------------private --------------
 
@@ -220,6 +238,8 @@ function DataTypeB(title, datail) {
     this.title = title;
     this.detail = datail;
 }
+
+
 
 /**
 取得「運動處方建議」並排序
