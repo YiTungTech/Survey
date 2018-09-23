@@ -14,6 +14,7 @@ function calculate_A(config, qmconfig) {
     var totalSumScore = 0; //所有session分數加總 -> 為了取平均值 (將5大類分數累加)
 
     $.each(config.session, function(i, item_session) {
+        // console.log('item_session='+JSON.stringify(item_session));
         var scoreArray = []; //單一session所有問題，轉換成分數陣列	-> 為了取最大值
         var sumScore = 0; //單一session所有問題的分數加總 		-> 為了取平均值
 
@@ -46,7 +47,17 @@ function calculate_A(config, qmconfig) {
         var target = targetArray[sIndex];
         $.each(compareArray, function(mIndex, compare) {
             if (target < compare) {
-                var wording = qmconfig.A.session[sIndex].question[mIndex].title;
+
+                //todo qmconfig mapping表還沒設定完成，所以wording會有空值
+                var titl;
+                try {
+                    title = qmconfig.A.session[sIndex].question[mIndex].title;
+                } catch (e) {
+
+                }
+                wording = (typeof title != 'undefined') ? title : '還沒設定';
+                // var wording = qmconfig.A.session[sIndex].question[mIndex].title;
+
                 resultArray.push(new DataTypeB(targetArray[sIndex], wording));
                 return false;
             }
@@ -59,6 +70,8 @@ function calculate_A(config, qmconfig) {
     //1.綜合平均值 2.取4捨5入到小數第1位
     uiTotalValue = (tempValueMax + tempValueAverage) / 2;
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
+
+    console.log('resultArray=' + JSON.stringify(resultArray));
 
     return resultArray;
 }
@@ -79,7 +92,9 @@ function calculate_B_typeA(qmconfig) {
 
         //取得所有「生活型態建議」
         var isNeedQuestion = qmconfig.B_typeA.B_typeA1_compare;
+        console.log('item_session='+JSON.stringify(item_session));
         tempLifeArray = getQuestionArray(item_session, isNeedQuestion);
+        console.log('要顯示的生活型態: session='+i+' tempLifeArray='+JSON.stringify(tempLifeArray ));
 
         //是否需要使用「運動處方」
         var isNeedExercise = uiValue[i] > qmconfig.B_typeA.B_typeA1_exercise;
@@ -189,10 +204,10 @@ function calculate_D(qmconfig) {
 
     //todo 總分的評語尚未處理 , 在這裡把D-[1-4]組起來，wording先寫在程式裡面。
 
-	console.log('calculate_D()');
-	var resultTitle = uiTotalValue;//總分
-    var resultDatail = '';//總分建議
-    var scoreArray = uiValue;//各項分數
+    console.log('calculate_D()');
+    var resultTitle = uiTotalValue; //總分
+    var resultDatail = ''; //總分建議
+    var scoreArray = uiValue; //各項分數
 
     //D-2
     //根據分數，取得對應range文字wording
@@ -208,24 +223,24 @@ function calculate_D(qmconfig) {
 
     //D-3
     if (scoreArray[0] > scoreArray[1] && scoreArray[0] > 2) {
-    	resultDatail += qmconfig.D.D_3[0].title;
-    }else if (scoreArray[1] >= scoreArray[0] && scoreArray[1] > 2) {
-    	resultDatail += qmconfig.D.D_3[1].title;
-    }else if (scoreArray[0] < 2 && scoreArray[1] < 2) {
-    	resultDatail += qmconfig.D.D_3[2].title;
-    }else if (scoreArray[0] < 2 && scoreArray[1] < 2 && scoreArray[2] < 3 && scoreArray[3] < 3 && scoreArray[4] < 3) {
-    	resultDatail += qmconfig.D.D_3[3].title;
+        resultDatail += qmconfig.D.D_3[0].title;
+    } else if (scoreArray[1] >= scoreArray[0] && scoreArray[1] > 2) {
+        resultDatail += qmconfig.D.D_3[1].title;
+    } else if (scoreArray[0] < 2 && scoreArray[1] < 2) {
+        resultDatail += qmconfig.D.D_3[2].title;
+    } else if (scoreArray[0] < 2 && scoreArray[1] < 2 && scoreArray[2] < 3 && scoreArray[3] < 3 && scoreArray[4] < 3) {
+        resultDatail += qmconfig.D.D_3[3].title;
     }
 
     //D-4
     if (scoreArray[2] > scoreArray[3] && scoreArray[2] > scoreArray[4] && scoreArray[2] > 3) {
-    	resultDatail += qmconfig.D.D_4[0].title;
-    }else if (scoreArray[3] > scoreArray[2] && scoreArray[3] > scoreArray[4] && scoreArray[3] > 3) {
-    	resultDatail += qmconfig.D.D_4[1].title;
-    }else if (scoreArray[4] > scoreArray[2] && scoreArray[4] > scoreArray[3] && scoreArray[4] > 3) {
-    	resultDatail += qmconfig.D.D_4[2].title;
-    }else {
-    	resultDatail += qmconfig.D.D_4[3].title;
+        resultDatail += qmconfig.D.D_4[0].title;
+    } else if (scoreArray[3] > scoreArray[2] && scoreArray[3] > scoreArray[4] && scoreArray[3] > 3) {
+        resultDatail += qmconfig.D.D_4[1].title;
+    } else if (scoreArray[4] > scoreArray[2] && scoreArray[4] > scoreArray[3] && scoreArray[4] > 3) {
+        resultDatail += qmconfig.D.D_4[2].title;
+    } else {
+        resultDatail += qmconfig.D.D_4[3].title;
     }
 
     return new DataTypeB(resultTitle, resultDatail);
@@ -300,9 +315,9 @@ session 		: {MEMO,question,question.id,sort}
 isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 */
 function getQuestionArray(session, isNeedQuestion) {
-
+	console.log('getQuestionArray()');
     var resultLifeArray = getFilterArray(session, isNeedQuestion); //取得符合資格陣列「生活型態建議」陣列
-
+    console.log('要顯示的生活型態: session='+session.MEMO+' resultLifeArray='+JSON.stringify(resultLifeArray ));
     // 「生活型態建議」排序
     //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。	
     //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
@@ -329,8 +344,13 @@ isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 function getFilterArray(session, condition) {
     var filterArray = [];
 
+    console.log('session=' + JSON.stringify(session));
+
     $.each(session.question, function(qIndex, item_question) {
+    	//todo $.getUrlVar(item_question.qid) 這裡可能會抓到空的
+
         var score = parseInt($.getUrlVar(item_question.qid));
+        
         score = valueToScore(score);
         // console.log('item_question score=' + score);
 
