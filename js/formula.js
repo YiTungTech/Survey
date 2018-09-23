@@ -5,17 +5,17 @@
 //2. -----A-[1-5]-[1]
 //3. -----A-[1-5]-[2]
 var uiValue = []; //要呈現在UI，各項「分數」，其它method會用到，所以放public
-
+var uiTotalValue; //D-1要呈現在UI，總「分數」，其它method會用到，所以放public
 function calculate_A(config, qmconfig) {
     console.log('calculate_A()');
     var resultArray = [];
-    var uiTotalValue; 		//D-1要呈現在UI，總「分數」
-    var totalScoreArray = [];  		//所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
-    var totalSumScore = 0; 			//所有session分數加總 -> 為了取平均值 (將5大類分數累加)
+
+    var totalScoreArray = []; //所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
+    var totalSumScore = 0; //所有session分數加總 -> 為了取平均值 (將5大類分數累加)
 
     $.each(config.session, function(i, item_session) {
-        var scoreArray = []; 		//單一session所有問題，轉換成分數陣列	-> 為了取最大值
-        var sumScore = 0;			//單一session所有問題的分數加總 		-> 為了取平均值
+        var scoreArray = []; //單一session所有問題，轉換成分數陣列	-> 為了取最大值
+        var sumScore = 0; //單一session所有問題的分數加總 		-> 為了取平均值
 
         $.each(item_session.question, function(j, item_question) {
             var score = valueToScore(parseInt(item_question.value));
@@ -38,21 +38,19 @@ function calculate_A(config, qmconfig) {
 
     });
 
-    // console.log('uiValue=' + uiValue.toString());
-
-    //取得mapping文字
-    var compareScoreArray = qmconfig.A.A_compare;
-    $.each(uiValue, function(sIndex, value) {
-
-    	var userScore = uiValue[sIndex];
-		$.each(compareScoreArray, function(mIndex, cScore) {
-			if (userScore < cScore) {
-				var wording = qmconfig.A.session[sIndex].question[mIndex].title;
-				resultArray.push(new DataTypeB(uiValue[sIndex],wording));
-
-				return false;
-			}
-		});
+    //根據分數，取得對應range文字wording
+    //耦合高，暫時維持現狀。
+    var targetArray = uiValue;
+    var compareArray = qmconfig.A.A_compare;
+    $.each(targetArray, function(sIndex, value) {
+        var target = targetArray[sIndex];
+        $.each(compareArray, function(mIndex, compare) {
+            if (target < compare) {
+                var wording = qmconfig.A.session[sIndex].question[mIndex].title;
+                resultArray.push(new DataTypeB(targetArray[sIndex], wording));
+                return false;
+            }
+        });
     });
 
     //計算D-1
@@ -62,29 +60,36 @@ function calculate_A(config, qmconfig) {
     uiTotalValue = (tempValueMax + tempValueAverage) / 2;
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
 
-
-    //todo 總分的評語尚未處理
-    resultArray.push(new DataTypeB(uiTotalValue,"全部的評語"));
-
     return resultArray;
-
 }
 
-//(模組)分算換算
-function valueToScore(value) {
-    switch (value) {
-        case 1:
-            return 0;
-        case 2:
-            return 2.5;
-        case 3:
-            return 5;
-        case 4:
-            return 7.5;
-        case 5:
-            return 10;
-    }
+function calculate_D(qmconfig) {
+
+    //todo 總分的評語尚未處理 , 在這裡把D-[1-4]組起來，wording先寫在程式裡面。
+
+	console.log('calculate_D()');
+	var resultTitle = uiTotalValue;
+    var resultDatail = '';
+
+    //D-2
+    //根據分數，取得對應range文字wording
+    //耦合高，暫時維持現狀。
+    var compareArray = qmconfig.D.D_compare;
+    var target = resultTitle;
+    $.each(compareArray, function(mIndex, compare) {
+        if (target < compare) {
+            resultDatail += qmconfig.D.D_2[mIndex].title;
+            return false;
+        }
+    });
+
+    //D-3
+
+
+
+    return new DataTypeB(resultTitle, resultDatail);
 }
+
 
 
 //計算
@@ -177,15 +182,15 @@ function calculate_B_typeB(qmconfig) {
 
 //1. -----C----- C-1,C-2
 function calculate_C(qmconfig) {
-	console.log('calculate_C()');
+    console.log('calculate_C()');
     var uiResult = [];
 
     //each session
     $.each(qmconfig.C.session, function(sIndex, item_session) {
         var tempArray = []; //暫存存放
-        var filterArray = []; 
+        var filterArray = [];
 
-        var isNeedQuestion = qmconfig.C.C_compare;//過濾條件
+        var isNeedQuestion = qmconfig.C.C_compare; //過濾條件
         //取得所有「自控建議」
         filterArray = getFilterArray(item_session, isNeedQuestion);
 
@@ -223,7 +228,7 @@ session : {MEMO,exercise,qidGroup,sort}
 isNeedQuestion : 分數大於config設定，符合條件，加入陣列
 */
 function getExerciseArray(session, isNeedExercise) {
-	console.log('getExerciseArray()');
+    console.log('getExerciseArray()');
     var resultExerciseArray = []; //「運動處方建議」陣列
 
     if (isNeedExercise) {
@@ -302,7 +307,7 @@ session 		: {question,question.qid}
 isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 */
 function getFilterArray(session, condition) {
-	var filterArray = []; 
+    var filterArray = [];
 
     $.each(session.question, function(qIndex, item_question) {
         var score = parseInt($.getUrlVar(item_question.qid));
@@ -316,4 +321,20 @@ function getFilterArray(session, condition) {
     });
 
     return filterArray;
+}
+
+//(模組)分算換算
+function valueToScore(value) {
+    switch (value) {
+        case 1:
+            return 0;
+        case 2:
+            return 2.5;
+        case 3:
+            return 5;
+        case 4:
+            return 7.5;
+        case 5:
+            return 10;
+    }
 }
