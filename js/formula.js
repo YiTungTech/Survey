@@ -26,9 +26,11 @@ function calculate_A(config, qmconfig) {
 
         //最大值
         var valueMax = Math.max.apply(null, scoreArray);
+        // console.log(item_session.title+' 最大值='+valueMax);
 
         //平均值
         var valueAverage = sumScore / item_session.question.length;
+        // console.log(item_session.title+' 平均值='+valueAverage);
 
         //1.綜合平均值 2.取4捨5入到小數第1位
         var temp = (valueMax + valueAverage) / 2;
@@ -71,14 +73,15 @@ function calculate_A(config, qmconfig) {
     uiTotalValue = (tempValueMax + tempValueAverage) / 2;
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
 
-    console.log('resultArray=' + JSON.stringify(resultArray));
+    // console.log('resultArray=' + JSON.stringify(resultArray));
 
     return resultArray;
 }
 
 
 //計算
-//1. -----B_typeA----- B-1-1,B-1-2,B-1-3 / B-2-1,B-2-2,B-2-3
+//1.  B-1-[1-3]
+//2.  B-2-[1-3]
 function calculate_B_typeA(qmconfig) {
     console.log('calculate_B_typeA()');
 
@@ -92,9 +95,9 @@ function calculate_B_typeA(qmconfig) {
 
         //取得所有「生活型態建議」
         var isNeedQuestion = qmconfig.B_typeA.B_typeA1_compare;
-        console.log('item_session='+JSON.stringify(item_session));
+        // console.log('item_session='+JSON.stringify(item_session));
         tempLifeArray = getQuestionArray(item_session, isNeedQuestion);
-        console.log('要顯示的生活型態: session='+i+' tempLifeArray='+JSON.stringify(tempLifeArray ));
+        // console.log('要顯示的生活型態: session='+i+' tempLifeArray='+JSON.stringify(tempLifeArray ));
 
         //是否需要使用「運動處方」
         var isNeedExercise = uiValue[i] > qmconfig.B_typeA.B_typeA1_exercise;
@@ -133,13 +136,15 @@ function calculate_B_typeB(qmconfig) {
 
     //each session
     $.each(qmconfig.B_typeB.session, function(sIndex, item_session) {
-        var tempArray = []; //暫存存放
-        var tempLifeArray = []; //「生活型態建議」陣列
+        var tempUiValue = uiValue[sIndex+2];        // session平均值
+        var tempArray = [];                         // 暫存存放
+        var tempLifeArray = [];                     //「生活型態建議」陣列
 
         //【排序規則一】飲食處方第一優先
         //【排序規則二】運動處方第二順位
-        var isNeedFood = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_food;
-        var isNeedExercise = uiValue[sIndex] > qmconfig.B_typeB.B_typeB1_exercise;
+        var isNeedFood = tempUiValue > qmconfig.B_typeB.B_typeB1_food;
+        console.log('isNeedFood='+isNeedFood+' uiValue[sIndex]='+tempUiValue +' qmconfig.B_typeB.B_typeB1_food='+qmconfig.B_typeB.B_typeB1_food);
+        var isNeedExercise = tempUiValue > qmconfig.B_typeB.B_typeB1_exercise;
         if (isNeedFood) { tempArray.push(new DataTypeB(item_session.food.title, item_session.food.detail)); }
         if (isNeedExercise) { tempArray.push(new DataTypeB(item_session.exercise.title, item_session.exercise.detail)); }
 
@@ -148,7 +153,7 @@ function calculate_B_typeB(qmconfig) {
         tempLifeArray = getQuestionArray(item_session, isNeedQuestion);
 
         //將tempLifeArray賽入 array
-        $.each(tempLifeArray, function(sIndex, item_tempLift) {
+        $.each(tempLifeArray, function(tIndex, item_tempLift) {
             if (tempArray >= 3) {
                 //最多只取3項目
                 return false;
@@ -317,7 +322,7 @@ isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 function getQuestionArray(session, isNeedQuestion) {
 	console.log('getQuestionArray()');
     var resultLifeArray = getFilterArray(session, isNeedQuestion); //取得符合資格陣列「生活型態建議」陣列
-    console.log('要顯示的生活型態: session='+session.MEMO+' resultLifeArray='+JSON.stringify(resultLifeArray ));
+    // console.log('要顯示的生活型態: session='+session.MEMO+' resultLifeArray='+JSON.stringify(resultLifeArray ));
     // 「生活型態建議」排序
     //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。	
     //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
@@ -344,7 +349,7 @@ isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
 function getFilterArray(session, condition) {
     var filterArray = [];
 
-    console.log('session=' + JSON.stringify(session));
+    // console.log('session=' + JSON.stringify(session));
 
     $.each(session.question, function(qIndex, item_question) {
     	//todo $.getUrlVar(item_question.qid) 這裡可能會抓到空的

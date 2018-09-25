@@ -10,15 +10,78 @@
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script> -->
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.js"></script> -->
     <script type="text/javascript">
-    var COOKIE_KEY_LAST_RECORD_URL = 'LAST_RECORD';
+    var COOKIE_KEY_LAST_RECORD_URL = 'LAST_RECORD'; //上一次檢驗報告記錄
+
+    var config; //json格式的config設定檔
 
     $(function() {
+        initConfig();
+    });
 
-        init();
+    function goNextPage(pageUrl) {
+        console.log('goNextPage');
+        //解除綁定
+        $(window).unbind('beforeunload');
+
+        //導網址
+        window.location.href = pageUrl;
+    }
+
+    function initConfig() {
+        console.log('initConfig()');
+        // 讀取config檔案
+        $.ajax({
+            cache: false,
+            url: "config/config.json",
+            dataType: "json",
+            success: function(data) {
+                config = data;
+                init();
+            }
+        });
+    }
+
+
+    function init() {
+        console.log('init()');
+
+        //在UI上面產生題目
+        $.each(config.session, function(sIndex, item_session) {
+            var appendHtml = '';
+            appendHtml += '<div class=page id=' + ('page' + sIndex) + '>';
+
+
+            $.each(item_session.question, function(qIndex, item_question) {
+
+
+                appendHtml += '<fieldset>';
+                appendHtml += '<legend>' + item_question.title + ' </legend>';
+                for (var i = 0; i < 5; i++) {
+                    var value = i + 1;
+                    appendHtml += '<label>' + (i + 1) + ' </label>';
+                    appendHtml += '<input type="radio" name=' + item_question.qid + ' value=' + value + '>';
+                }
+                appendHtml += '</fieldset>';
+
+            });
+            appendHtml += '</div>';
+            console.log('appendHtml=' + appendHtml);
+            $('#collect').append(appendHtml);
+        });
+
+
+        $('.page').hide();
+        $('.page').eq(0).show();
+
+        $(window).bind('beforeunload', function(e) {
+
+            console.log('beforeunload');
+            return '資料尚未存檔，確定是否要離開？'; //Chrome v51 (2016/04) 取消自訂wording
+        });
 
         //預設勾選第一個radio button
         $('fieldset').each(function(index, element) {
-            $(this).find('input').eq(1).attr('checked', true);
+            $(this).find('input').eq(0).attr('checked', true);
         });
 
         //檢查是否有上次檢驗報告紀錄
@@ -81,45 +144,28 @@
             goNextPage(url);
 
         }
-    });
-
-    function goNextPage(pageUrl) {
-        console.log('goNextPage');
-        //解除綁定
-        $(window).unbind('beforeunload');
-
-        //導網址
-        window.location.href = pageUrl;
-    }
-
-
-    function init() {
-        console.log('init()');
-        $(window).bind('beforeunload', function(e) {
-
-            console.log('beforeunload');
-            return '資料尚未存檔，確定是否要離開？'; //Chrome v51 (2016/04) 取消自訂wording
-        });
     }
     </script>
 </head>
 
 <body>
-    <div class="page" id="page1">
+    <div id='collect'>
+
+    </div>
+    <!-- <div class="page">
         <div id="target"></div>
         <h1>這裡是Page1</h1>
-        <h2>Radio Group</h2>
-        <fieldset id="fieldset-1">
+        <fieldset>
             <legend>1. 常待在密閉、通風不良空間嗎？</legend>
-            <label for="radio-1">1</label>
+            <label>1</label>
             <input type="radio" name="1743046915" value="1">
-            <label for="radio-2">2</label>
+            <label>2</label>
             <input type="radio" name="1743046915" value="2">
-            <label for="radio-3">3</label>
+            <label>3</label>
             <input type="radio" name="1743046915" value="3">
-            <label for="radio-4">4</label>
+            <label>4</label>
             <input type="radio" name="1743046915" value="4">
-            <label for="radio-5">5</label>
+            <label>5</label>
             <input type="radio" name="1743046915" value="5">
         </fieldset>
         <fieldset>
@@ -165,9 +211,8 @@
             <label for="radio-5">5</label>
             <input type="radio" name="822476452" value="5">
         </fieldset>
-    </div>
+    </div> -->
     <script type="text/javascript">
-    $('#page2').hide();
     </script>
     <button id="btn_pre">上一頁</button>
     <button id="btn_next">下一頁</button>
