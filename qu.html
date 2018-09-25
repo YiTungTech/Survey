@@ -49,7 +49,7 @@
         $.each(config.session, function(sIndex, item_session) {
             var appendHtml = '';
             appendHtml += '<div class=page id=' + ('page' + sIndex) + '>';
-
+            appendHtml += '<p>'+item_session.title+'</p>';
 
             $.each(item_session.question, function(qIndex, item_question) {
 
@@ -101,6 +101,7 @@
 
         //設定上下頁按鈕
         var currentPage = 0;
+        $("#btn_pre").hide();
         $("#btn_pre").click(function() {
             gotoNextAction(--currentPage);
         });
@@ -110,7 +111,11 @@
         });
         //問卷上/下頁 or 結束問卷
         function gotoNextAction(page) {
-
+            if (currentPage != 0) {
+                $("#btn_pre").show();
+            }else{
+                $("#btn_pre").hide();
+            }
             //如果是最後一頁，跳到檢驗報告頁
             if (page >= $(".page").length) {
                 onClickSubmit();
@@ -152,70 +157,11 @@
     <div id='collect'>
 
     </div>
-    <!-- <div class="page">
-        <div id="target"></div>
-        <h1>這裡是Page1</h1>
-        <fieldset>
-            <legend>1. 常待在密閉、通風不良空間嗎？</legend>
-            <label>1</label>
-            <input type="radio" name="1743046915" value="1">
-            <label>2</label>
-            <input type="radio" name="1743046915" value="2">
-            <label>3</label>
-            <input type="radio" name="1743046915" value="3">
-            <label>4</label>
-            <input type="radio" name="1743046915" value="4">
-            <label>5</label>
-            <input type="radio" name="1743046915" value="5">
-        </fieldset>
-        <fieldset>
-            <legend>2. 常感到空氣污濁嗎 (如空污、二手煙、廚房油煙)?</legend>
-            <label for="radio-1">1</label>
-            <input type="radio" name="1807423736" value="1">
-            <label for="radio-2">2</label>
-            <input type="radio" name="1807423736" value="2">
-            <label for="radio-3">3</label>
-            <input type="radio" name="1807423736" value="3">
-            <label for="radio-4">4</label>
-            <input type="radio" name="1807423736" ivalue="4">
-            <label for="radio-5">5</label>
-            <input type="radio" name="1807423736" value="5">
-        </fieldset>
-        <fieldset>
-            <legend>3. 經常鼻塞或氣喘嗎？</legend>
-            <label for="radio-1">1</label>
-            <input type="radio" name="1295839583" value="1">
-            <label for="radio-2">2</label>
-            <input type="radio" name="1295839583" value="2">
-            <label for="radio-3">3</label>
-            <input type="radio" name="1295839583" value="3">
-            <label for="radio-4">4</label>
-            <input type="radio" name="1295839583" value="4">
-            <label for="radio-5">5</label>
-            <input type="radio" name="1295839583" value="5">
-        </fieldset>
-    </div>
-    <div class="page" id="page2">
-        <h1>這裡是Page2</h1>
-        <h2>Radio Group</h2>
-        <fieldset>
-            <legend>1. 經常連續超過12小時以上的情緒緊繃？</legend>
-            <label for="radio-1">1</label>
-            <input type="radio" name="822476452" value="1">
-            <label for="radio-2">2</label>
-            <input type="radio" name="822476452" value="2">
-            <label for="radio-3">3</label>
-            <input type="radio" name="822476452" value="3">
-            <label for="radio-4">4</label>
-            <input type="radio" name="822476452" value="4">
-            <label for="radio-5">5</label>
-            <input type="radio" name="822476452" value="5">
-        </fieldset>
-    </div> -->
     <script type="text/javascript">
     </script>
     <button id="btn_pre">上一頁</button>
     <button id="btn_next">下一頁</button>
+    <br>
     <button id="btn_lastRecordUrl">查看上次檢驗報告</button>
 </body>
 
