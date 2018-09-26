@@ -1,16 +1,99 @@
+/*卡片title文字顏色*/
 
+#card-title-A-1,
+#card-title-B-1 {
+    color: #3b8d85;
+}
 
+#card-title-A-2,
+#card-title-B-2 {
+    color: #2c915f;
+}
 
-/*文字顏色*/
+#card-title-A-3,
+#card-title-B-3 {
+    color: #c24b55;
+}
+
+#card-title-A-4,
+#card-title-B-4 {
+    color: #db9e16;
+}
+
+#card-title-A-5,
+#card-title-B-5 {
+    color: #005797;
+}
+
+#card-title-C-1 {
+    color: #000000;
+}
+
 #card-title-C-2 {
-	color: #297485;
+    color: #297485;
 }
 
-#card-C-1 {
-	background-color: #e5f9f6;
+
+/*卡片background顏色*/
+#card-A-1,
+#card-B-1,
+#card-A-1>.card-body>.card-text:after,
+#card-B-1>.card-body>.card-text:after {
+    background-color: #d7ede9;
 }
+
+#card-A-2,
+#card-B-2,
+#card-A-2>.card-body>.card-text:after,
+#card-B-2>.card-body>.card-text:after {
+    background-color: #d9f1d6;
+}
+
+#card-A-3,
+#card-B-3,
+#card-A-3>.card-body>.card-text:after,
+#card-B-3>.card-body>.card-text:after {
+    background-color: #fff0e2;
+}
+
+#card-A-4,
+#card-B-4,
+#card-A-4>.card-body>.card-text:after,
+#card-B-4>.card-body>.card-text:after {
+    background-color: #fffbd0;
+}
+
+#card-A-5,
+#card-B-5,
+#card-A-5>.card-body>.card-text:after,
+#card-B-5>.card-body>.card-text:after {
+    background-color: #eef9fe;
+}
+
+#card-C-1,
+#card-C-1>.card-body>.card-text:after {
+    background-color: #e5f9f6;
+}
+
+
+/*#card-C-2  , #card-C-2>.card-body>.card-text:after {
+    background-color: white;
+}*/
+
+.card-title {
+    margin: 0px 0px 20px 0px;
+    /*title下方的margin*/
+    font-size: 1.4em/*title size*/
+}
+
+
 
 /*限制文字行數不能超過2行，文字超過行數用...代替*/
+
+.card-grid-top .card-body {
+    margin: 0px 40px 0px 40px;
+}
+
 .card-title,
 .card-text {
     /* hide text if it more than N lines  */
@@ -27,7 +110,13 @@
     margin-right: -1em;
     padding-right: 1em;
 }
+
+
+
+
+
 /* create the ... */
+
 .card-text:before {
     /* points in the end */
     content: '...';
@@ -37,6 +126,9 @@
     right: 0;
     bottom: 0;
 }
+
+
+
 /* hide ... if we have text, which is less than or equal to max lines */
 
 .card-text:after {
@@ -50,9 +142,12 @@
     width: 1em;
     height: 1em;
     margin-top: 0.2em;
-    /* bg color = bg color under block */
-    background: white;
 }
+
+
+
+
+
 
 .card-grid-top {}
 
@@ -62,10 +157,15 @@
 
 .card-columns {
     column-count: 1;
-    column-gap: 0; /*columns之間的距離*/
+    column-gap: 0;
+    /*columns之間的距離*/
 }
-.card-columns > .card {
-  margin: 0;/*row之間的距離*/
+
+.card-columns>.card {
+    margin: 0;
+    /*row之間的距離*/
+    border-color: #34d6b7;
+    border-radius: 0;
 }
 
 
@@ -88,8 +188,8 @@
     }
 
     .card-grid-middle-large {
-        min-height: 340px;
-        max-height: 340px;
+        min-height: 333px;
+        max-height: 333px;
     }
 
     .card-grid-middle-small {
@@ -103,6 +203,3 @@
 @media (min-width: 992px) {}
 
 @media (min-width: 1200px) {}
-
-
-
