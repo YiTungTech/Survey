@@ -89,11 +89,6 @@
     font-size: 1.4em/*title size*/
 }
 
-/*C-1,C-2 內縮margin*/
-.card-grid-top .card-body {
-    margin: 0px 40px 0px 40px;
-}
-
 /*限制文字行數不能超過2行，文字超過行數用...代替*/
 #card-C-1>.card-body>.card-text,
 #card-C-2>.card-body>.card-text {
@@ -225,9 +220,18 @@
         min-height: 224px;
         max-height: 224px;
     }
+
+    /*C-1,C-2 內縮margin*/
+.card-grid-top .card-body {
+    margin: 0px 20px 0px 20px;
+}
 }
 
 @media (min-width: 1200px) {
+    /*C-1,C-2 內縮margin*/
+    .card-grid-top .card-body {
+    margin: 0px 40px 0px 40px;
+}
 	.card-title {
 		font-size: 1.6em;
 	}
