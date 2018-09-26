@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrapDemo.css">
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -15,111 +16,19 @@
 </head>
 
 <body>
-    <style type="text/css">
-    /* 限制文字行數不能超過2行*/
-    /* styles for '...' */
-
-    .card-title,.card-text {
-        /* hide text if it more than N lines  */
-        overflow: hidden;
-        /* for set '...' in absolute position */
-        position: relative;
-        /* use this value to count block height */
-        line-height: 1.2em;
-        /* max-height = line-height (1.2) * lines max number (3) */
-        max-height: 2.4em;
-        /* fix problem when last visible word doesn't adjoin right side  */
-        text-align: justify;
-        /* place for '...' */
-        margin-right: -1em;
-        padding-right: 1em;
-    }
-    /* create the ... */
-
-    .card-text:before {
-        /* points in the end */
-        content: '...';
-        /* absolute position */
-        position: absolute;
-        /* set position to right bottom corner of block */
-        right: 0;
-        bottom: 0;
-    }
-    /* hide ... if we have text, which is less than or equal to max lines */
-
-    .card-text:after {
-        /* points in the end */
-        content: '';
-        /* absolute position */
-        position: absolute;
-        /* set position to right bottom corner of text */
-        right: 0;
-        /* set width and height */
-        width: 1em;
-        height: 1em;
-        margin-top: 0.2em;
-        /* bg color = bg color under block */
-        background: white;
-    }
-    /* 限制文字行數不能超過2行*/
-
-    .card-grid-top {}
-
-    .card-grid-middle-large {}
-
-    .card-grid-middle-small {}
-
-    .card-columns {
-        column-count: 1;
-    }
-
-    .card-columns-header {
-        column-count: 1;
-    }
-
-    @media (min-width: 576px) {
-        .card-columns {
-            column-count: 4;
-        }
-        .card-columns-header {
-            column-count: 2;
-        }
-
-        /*限制card的高度*/
-        .card-grid-top {
-            min-height: 250px;
-            max-height: 250px;
-        }
-
-        .card-grid-middle-large {
-            min-height: 340px;
-            max-height: 340px;
-        }
-
-        .card-grid-middle-small {
-            min-height: 220px;
-            max-height: 220px;
-        }
-    }
-
-    @media (min-width: 768px) {}
-
-    @media (min-width: 992px) {}
-
-    @media (min-width: 1200px) {}
-    </style>
+    
     <div id="table_canvas">
         <div class="container">
             <div class="card-columns card-columns-header">
                 <div class="card card-grid-top">
                     <div class="card-body">
-                        <h4 class="card-title text-center">創造有利條件的方法</h4>
+                        <h4 class="card-title text-center" id="card-title-C-2" >創造有利條件的方法</h4>
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
                     </div>
                 </div>
-                <div class="card card-grid-top">
+                <div class="card card-grid-top" id="card-C-1">
                     <div class="card-body">
                         <h4 class="card-title text-center	">聚焦內在的方法</h4>
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
@@ -131,7 +40,7 @@
         </div>
         <div class="container">
             <div class="card-columns">
-                <div class="card card-grid-middle-large">
+                <div class="card card-grid-middle-large" id="test">
                     <div class="card-body">
                         <h4 class="card-title">1.供給性缺氧檢驗數據</h4>
                         <p class="card-text">供養不足分析供養不足分析供養不足分析供養不足分析供養不足分析</p>
