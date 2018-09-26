@@ -34,7 +34,9 @@
 }
 
 
+
 /*卡片background顏色*/
+
 #card-A-1,
 #card-B-1,
 #card-A-1>.card-body>.card-text:after,
@@ -81,26 +83,20 @@
 }
 
 
-/*#card-C-2  , #card-C-2>.card-body>.card-text:after {
-    background-color: white;
-}*/
-
 .card-title {
     margin: 0px 0px 20px 0px;
     /*title下方的margin*/
     font-size: 1.4em/*title size*/
 }
 
-
-
-/*限制文字行數不能超過2行，文字超過行數用...代替*/
-
+/*C-1,C-2 內縮margin*/
 .card-grid-top .card-body {
     margin: 0px 40px 0px 40px;
 }
 
-.card-title,
-.card-text {
+/*限制文字行數不能超過2行，文字超過行數用...代替*/
+#card-C-1>.card-body>.card-text,
+#card-C-2>.card-body>.card-text {
     /* hide text if it more than N lines  */
     overflow: hidden;
     /* for set '...' in absolute position */
@@ -108,7 +104,7 @@
     /* use this value to count block height */
     line-height: 1.2em;
     /* max-height = line-height (1.2) * lines max number (3) */
-    max-height: 2.4em;
+    max-height: 1.2em;
     /* fix problem when last visible word doesn't adjoin right side  */
     text-align: justify;
     /* place for '...' */
@@ -116,12 +112,37 @@
     padding-right: 1em;
 }
 
+.card-title,
+.card-text,
+#card-B-3>.card-body>.card-text,
+#card-B-4>.card-body>.card-text,
+#card-B-5>.card-body>.card-text {
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    /*line-height: 1.2em;*/
+    /* max-height = line-height (1.2) * lines max number (3) */
+    /*max-height: 2.4em;*/
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+}
 
-
-
+.card-title,
+#card-B-3>.card-body>.card-text,
+#card-B-4>.card-body>.card-text,
+#card-B-5>.card-body>.card-text {
+    overflow: hidden;
+    position: relative;
+    line-height: 1.2em;
+    max-height: 2.4em;
+}
 
 /* create the ... */
-
 .card-text:before {
     /* points in the end */
     content: '...';
@@ -131,7 +152,6 @@
     right: 0;
     bottom: 0;
 }
-
 
 
 /* hide ... if we have text, which is less than or equal to max lines */
@@ -148,11 +168,6 @@
     height: 1em;
     margin-top: 0.2em;
 }
-
-
-
-
-
 
 .card-grid-top {}
 
@@ -178,16 +193,17 @@
     column-count: 1;
 }
 
-@media (min-width: 576px) {
-    
-}
+@media (min-width: 576px) {}
 
-@media (min-width: 768px) {
-
-}
+@media (min-width: 768px) {}
 
 @media (min-width: 992px) {
-	.card-columns {
+
+	.card-title {
+		font-size: 1.3em;
+	}
+
+    .card-columns {
         column-count: 4;
     }
     .card-columns-header {
@@ -196,19 +212,23 @@
 
     /*限制card的高度*/
     .card-grid-top {
-        min-height: 250px;
-        max-height: 250px;
+        min-height: 180px;
+        max-height: 180px;
     }
 
     .card-grid-middle-large {
-        min-height: 333px;
-        max-height: 333px;
+        min-height: 339px;
+        max-height: 339px;
     }
 
     .card-grid-middle-small {
-        min-height: 220px;
-        max-height: 220px;
+        min-height: 224px;
+        max-height: 224px;
     }
 }
 
-@media (min-width: 1200px) {}
+@media (min-width: 1200px) {
+	.card-title {
+		font-size: 1.6em;
+	}
+}

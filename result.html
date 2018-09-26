@@ -83,7 +83,7 @@
             $.each(config.session, function(i, item_session) {
                 //跑完所有question
                 $.each(item_session.question, function(j, item_question) {
-                    
+
                     // console.log('getUrlVar='+$.getUrlVar(item_question.qid));
                     // item_question.value = $.getUrlVar(item_question.qid); // json object set value
 
@@ -91,8 +91,8 @@
                     var qid = $.getUrlVar(item_question.qid);
                     if (typeof qid != 'undefined') {
                         item_question.value = $.getUrlVar(item_question.qid); // json object set value    
-                    }else{
-                        item_question.value = '4';//set default
+                    } else {
+                        item_question.value = '4'; //set default
                     }
                 });
             });
@@ -105,10 +105,10 @@
         function calculate() {
             console.log('calculate()');
             var A = calculate_A(config, qmconfig);
-            var B_typeA =  calculate_B_typeA(qmconfig);
-            var B_typeB =  calculate_B_typeB(qmconfig);
-            var C =  calculate_C(qmconfig);
-            var D =  calculate_D(qmconfig);
+            var B_typeA = calculate_B_typeA(qmconfig);
+            var B_typeB = calculate_B_typeB(qmconfig);
+            var C = calculate_C(qmconfig);
+            var D = calculate_D(qmconfig);
 
             updateUI(B_typeA);
             updateUI_B_typeB(B_typeB);
@@ -120,10 +120,10 @@
 
         //update UI
 
-        function updateUI_A(A){
-            $.each(A, function(index,  data){
-                var outputTitle = '#ui_A_'+(index+1)+'_1';
-                var outputDetail = '#ui_A_'+(index+1)+'_2';
+        function updateUI_A(A) {
+            $.each(A, function(index, data) {
+                var outputTitle = '#ui_A_' + (index + 1) + '_1';
+                var outputDetail = '#ui_A_' + (index + 1) + '_2';
                 var title = A[index].title;
                 var detail = A[index].detail;
                 $(outputTitle).append(title);
@@ -131,67 +131,67 @@
             });
         }
 
-        function updateUI(B_typeA){
-            $.each($('.ui_B_1'), function(index,  data){
+        function updateUI(B_typeA) {
+            $.each($('.ui_B_1'), function(index, data) {
                 var data_B_1 = B_typeA[0];
-                if ((index >= data_B_1.length)) return;//超過長度
+                if ((index >= data_B_1.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(data_B_1[index].title+' <p> '+data_B_1[index].detail +'</p');
+                $(this).append(data_B_1[index].title + ' <p> ' + data_B_1[index].detail + '</p');
             });
 
-            $.each($('.ui_B_2'), function(index,  data){
+            $.each($('.ui_B_2'), function(index, data) {
                 var data_B_2 = B_typeA[1];
                 if ((index >= data_B_2.length)) return;
                 //todo 之後title跟detail要分開
-                $(this).append(data_B_2[index].title+' <p> '+data_B_2[index].detail +'</p');
-                
+                $(this).append(data_B_2[index].title + ' <p> ' + data_B_2[index].detail + '</p');
+
             });
         }
 
-        function updateUI_B_typeB(B_typeB){
-            $.each($('.ui_B_3'), function(index,  data){
+        function updateUI_B_typeB(B_typeB) {
+            $.each($('.ui_B_3'), function(index, data) {
                 var data_B_3 = B_typeB[0];
-                if ((index >= data_B_3.length)) return;//超過長度
+                if ((index >= data_B_3.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(data_B_3[index].title+' <p> '+data_B_3[index].detail +'</p');
+                $(this).append(data_B_3[index].title + ' <p> ' + data_B_3[index].detail + '</p');
             });
 
-            $.each($('.ui_B_4'), function(index,  data){
+            $.each($('.ui_B_4'), function(index, data) {
                 var ui_B_4 = B_typeB[1];
-                if ((index >= ui_B_4.length)) return;//超過長度
+                if ((index >= ui_B_4.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(ui_B_4[index].title+' <p> '+ui_B_4[index].detail +'</p');
+                $(this).append(ui_B_4[index].title + ' <p> ' + ui_B_4[index].detail + '</p');
             });
 
             //todo UI沒有顯示出B-5-1：
-            $.each($('.ui_B_5'), function(index,  data){
+            $.each($('.ui_B_5'), function(index, data) {
                 var ui_B_5 = B_typeB[2];
-                if ((index >= ui_B_5.length)) return;//超過長度
+                if ((index >= ui_B_5.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(ui_B_5[index].title+' <p> '+ui_B_5[index].detail +'</p');
+                $(this).append(ui_B_5[index].title + ' <p> ' + ui_B_5[index].detail + '</p');
             });
 
         }
 
 
-        function updateUI_C(C){
-            $.each($('.ui_C_1'), function(index,  data){
+        function updateUI_C(C) {
+            $.each($('.ui_C_1'), function(index, data) {
                 var data_C = C[0];
-                if ((index >= data_C.length)) return;//超過長度
+                if ((index >= data_C.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(data_C[index].title+' <p> '+data_C[index].detail +'</p');
+                $(this).append(data_C[index].title + ' <p> ' + data_C[index].detail + '</p');
             });
 
-            $.each($('.ui_C_2'), function(index,  data){
+            $.each($('.ui_C_2'), function(index, data) {
                 var data_C = C[1];
-                if ((index >= data_C.length)) return;//超過長度
+                if ((index >= data_C.length)) return; //超過長度
                 //todo 之後title跟detail要分開
-                $(this).append(data_C[index].title+' <p> '+data_C[index].detail +'</p');
+                $(this).append(data_C[index].title + ' <p> ' + data_C[index].detail + '</p');
             });
 
         }
 
-        function updateUI_D(D){
+        function updateUI_D(D) {
             $('#ui_D_1').append(D.title);
             $('#ui_D_2').append(D.detail);
         }
@@ -240,7 +240,6 @@
 
 <body>
     <p id="version">version 2</p>
-    
     <p id="ui_A_1_1">A-1-1供：</p>
     <p id="ui_A_1_2">A-1-2供評：</p>
     <p id="ui_A_2_1">A-2-1耗：</p>

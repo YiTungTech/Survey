@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/bootstrapDemo.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="js/js.cookie.js"></script>
+    <script src="js/html2canvas.js"></script>
+    <script src="js/formula.js"></script>
+    <script type="text/javascript">
+    var gFormID = '1FAIpQLSf61A3kcoDVT929bta3X01AMaz4ieTDYwL2Ehz9FoHVuaIVnw'; //google 表單ID [for test CopyDown + Gmerge 版本 (Responses)]
+    var gSheetParam = {}; //google sheet所需要的參數
+
+    $(function() {
+        console.log('start()');
+        var config; //json格式的config設定檔
+        var qmconfig; //json格式的question mapping設定檔
+
+        initConfig();
+        initDownloadButton();
+
+        //-----解析gSheetRequestParam-----
+        //1. 提供method取得gSheetRequestParam參數
+        //2. 組合出google sheet url
+        $.extend({
+            getUrlVars: function() {
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                var vars = [],
+                    hash; //目前不清楚vars型別是什麼?怎麼使用?
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                    //動態宣告gSheetParam物件的Object
+                    gSheetParam['entry.' + hash[0]] = decodeURIComponent(hash[1]);
+                }
+                return vars;
+            },
+            getUrlVar: function(name) {
+                //回傳http get參數
+                var result = $.getUrlVars()[name];
+                return typeof result != 'undefined' ? result : '1';
+            }
+        });
+
+
+        function initConfig() {
+            console.log('initConfig()');
+            // 讀取config檔案
+            $.ajax({
+                cache: false,
+                url: "config/config.json",
+                dataType: "json",
+                success: function(data) {
+                    config = data;
+                    initQuestionMapping();
+                }
+            });
+        }
+
+        function initQuestionMapping() {
+            console.log('initQuestionMapping()');
+            // 讀取config檔案
+            $.ajax({
+                cache: false,
+                url: "config/qmconfig.json",
+                dataType: "json",
+                success: function(data) {
+                    // console.log('initQuestionMapping() success');
+                    qmconfig = data;
+                    updateConfig();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+
+            });
+        }
+
+
+        //將user的分數塞入config檔案
+        function updateConfig() {
+            console.log('updateConfig()');
+            $.each(config.session, function(i, item_session) {
+                //跑完所有question
+                $.each(item_session.question, function(j, item_question) {
+
+                    // console.log('getUrlVar='+$.getUrlVar(item_question.qid));
+                    // item_question.value = $.getUrlVar(item_question.qid); // json object set value
+
+                    //todo 問題還沒建立完成，所以部分item_question.qid會拿到空的qid
+                    var qid = $.getUrlVar(item_question.qid);
+                    if (typeof qid != 'undefined') {
+                        item_question.value = $.getUrlVar(item_question.qid); // json object set value    
+                    } else {
+                        item_question.value = '4'; //set default
+                    }
+                });
+            });
+            // console.log('config=' + JSON.stringify(config));
+            calculate();
+        }
+
+
+        //計算data
+        function calculate() {
+            console.log('calculate()');
+            var A = calculate_A(config, qmconfig);
+            var B_typeA = calculate_B_typeA(qmconfig);
+            var B_typeB = calculate_B_typeB(qmconfig);
+            var C = calculate_C(qmconfig);
+            var D = calculate_D(qmconfig);
+
+            updateUI(B_typeA);
+            updateUI_B_typeB(B_typeB);
+            updateUI_C(C);
+            updateUI_A(A);
+            updateUI_D(D);
+
+        }
+
+        //update UI
+
+        function updateUI_A(A) {
+            $.each(A, function(index, data) {
+                var outputTitle = '#ui_A_' + (index + 1) + '_1';
+                var outputDetail = '#ui_A_' + (index + 1) + '_2';
+                var title = A[index].title;
+                var detail = A[index].detail;
+                $(outputTitle).append(title);
+                $(outputDetail).append(detail);
+            });
+        }
+
+        function updateUI(B_typeA) {
+            $.each($('.ui_B_1'), function(index, data) {
+                var data_B_1 = B_typeA[0];
+                if ((index >= data_B_1.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+data_B_1[index].detail +'</p'
+                $(this).append(data_B_1[index].title);
+            });
+
+            $.each($('.ui_B_2'), function(index, data) {
+                var data_B_2 = B_typeA[1];
+                if ((index >= data_B_2.length)) return;
+                //todo 之後title跟detail要分開 +' <p> '+data_B_2[index].detail +'</p'
+                $(this).append(data_B_2[index].title);
+
+            });
+        }
+
+        function updateUI_B_typeB(B_typeB) {
+            $.each($('.ui_B_3'), function(index, data) {
+                var data_B_3 = B_typeB[0];
+                if ((index >= data_B_3.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+data_B_3[index].detail +'</p'
+                $(this).append(data_B_3[index].title);
+            });
+
+            $.each($('.ui_B_4'), function(index, data) {
+                var ui_B_4 = B_typeB[1];
+                if ((index >= ui_B_4.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+ui_B_4[index].detail +'</p'
+                $(this).append(ui_B_4[index].title);
+            });
+
+            //todo UI沒有顯示出B-5-1：
+            $.each($('.ui_B_5'), function(index, data) {
+                var ui_B_5 = B_typeB[2];
+                if ((index >= ui_B_5.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+ui_B_5[index].detail +'</p'
+                $(this).append(ui_B_5[index].title);
+            });
+
+        }
+
+
+        function updateUI_C(C) {
+            $.each($('.ui_C_1'), function(index, data) {
+                var data_C = C[0];
+                if ((index >= data_C.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+data_C[index].detail +'</p'
+                $(this).append(data_C[index].title);
+            });
+
+            $.each($('.ui_C_2'), function(index, data) {
+                var data_C = C[1];
+                if ((index >= data_C.length)) return; //超過長度
+                //todo 之後title跟detail要分開 +' <p> '+data_C[index].detail +'</p'
+                $(this).append(data_C[index].title);
+            });
+
+        }
+
+        function updateUI_D(D) {
+            $('#ui_D_1').append(D.title);
+            $('#ui_D_2').append(D.detail);
+        }
+
+        //todo: 截圖功能先不用在這裡寫 (demo已經有寫了)
+
+
+    });
+
+    //send gooogle sheet request
+    function gSheetRequestParam() {
+
+        console.log('gSheetParam=' + JSON.stringify(gSheetParam));
+        $.ajax({
+            url: 'https://docs.google.com/forms/d/e/' + gFormID + '/formResponse',
+            data: gSheetParam,
+            type: "POST",
+            dataType: "xml",
+            statusCode: {
+                0: function() {
+                    console.log('Success message');
+                },
+                200: function() {
+                    console.log('Success message');
+                }
+            }
+        });
+    }
+
+    //下載檔案到local
+    function saveAs(uri, filename) {
+        var link = document.createElement('a');
+        if (typeof link.download === 'string') {
+            link.href = uri;
+            link.download = filename;
+            //Firefox requires the link to be in the body
+            document.body.appendChild(link);
+            //simulate click
+            link.click();
+            //remove the link when done
+            document.body.removeChild(link);
+        } else {
+            window.open(uri);
+        }
+    }
+
+    function initDownloadButton() {
+        $("#downloadReport").on('click', function() {
+        console.log('onclick');
+        html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
+            saveAs(canvas.toDataURL(), '12宮格頁面.png');
+        });
+        // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
+        //     saveAs(canvas.toDataURL(), '詳細頁面.png');
+        // });
+    });
+    }
+
+    </script>
+</head>
+
+<body>
+    <table width="100%" style="margin: 40px 0px 40px 0px;">
+        <tr>
+            <td style="width: 25%; text-align: center;">
+                <img src="image/bootstrapDemo/logo.jpg">
+            </td>
+            <td style="width: 50%;text-align: center;">
+                <div style="color: #34d6b7; font-size: 1.0em">My Oxygener Report
+                </div>
+                <div style="color: #404040; font-size: 3.0em">優氧報告結果：
+                </div>
+            </td>
+            <td style="width: 25%;text-align: center;"></td>
+        </tr>
+    </table>
+    <div id="table_canvas">
+        <div class="container">
+            <div class="card-columns card-columns-header">
+                <div class="card card-grid-top" id="card-C-2">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-C-2">創造有利條件的方法</h4>
+                        <p class="card-text ui_C_2"></p>
+                        <p class="card-text ui_C_2"></p>
+                        <p class="card-text ui_C_2"></p>
+                    </div>
+                </div>
+                <div class="card card-grid-top" id="card-C-1">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-C-1">聚焦內在的方法</h4>
+                        <p class="card-text ui_C_1"></p>
+                        <p class="card-text ui_C_1"></p>
+                        <p class="card-text ui_C_1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card-columns">
+                <div class="card card-grid-middle-large" id="card-A-1">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-A-1">供給性缺氧檢驗數據</h4>
+                        <p class="card-text" id="ui_A_1_1">供氧不足分析 : </p>
+                        <p class="card-text" id="ui_A_1_2"></p>
+                    </div>
+                </div>
+                <div class="card  card-grid-middle-large" id="card-A-2">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-A-2">耗損性缺氧檢驗數據</h4>
+                        <p class="card-text" id="ui_A_2_1">能量透支分析 : </p>
+                        <p class="card-text" id="ui_A_2_2"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-A-3">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-A-3">熱性體質檢驗數據</h4>
+                        <p class="card-text" id="ui_A_3_1">損傷發炎程度 : </p>
+                        <p class="card-text" id="ui_A_3_2"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-A-4">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-A-4">濕性體質檢驗數據</h4>
+                        <p class="card-text" id="ui_A_4_1">循環淤滯程度 : </p>
+                        <p class="card-text" id="ui_A_4_2"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-A-5">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-A-5">寒性體質檢驗數據</h4>
+                        <p class="card-text" id="ui_A_5_1">失調衰退程度 : </p>
+                        <p class="card-text" id="ui_A_5_2"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-B-3">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-B-3">免疫代謝的方案</h4>
+                        <p class="card-text ui_B_3"></p>
+                        <p class="card-text ui_B_3"></p>
+                        <p class="card-text ui_B_3"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-B-4">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-B-4">微循環改善的方案</h4>
+                        <p class="card-text ui_B_4"></p>
+                        <p class="card-text ui_B_4"></p>
+                        <p class="card-text ui_B_4"></p>
+                    </div>
+                </div>
+                <div class="card" id="card-B-5">
+                    <div class="card-body card-grid-middle-small">
+                        <h4 class="card-title text-center" id="card-title-B-5">機能復甦的方案</h4>
+                        <p class="card-text ui_B_5"></p>
+                        <p class="card-text ui_B_5"></p>
+                        <p class="card-text ui_B_5"></p>
+                    </div>
+                </div>
+                <div class="card card-grid-middle-large" id="card-B-1">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-B-1">供養治療的方案</h4>
+                        <p class="card-text ui_B_1"></p>
+                        <p class="card-text ui_B_1"></p>
+                        <p class="card-text ui_B_1"></p>
+                    </div>
+                </div>
+                <div class="card card-grid-middle-large" id="card-B-2">
+                    <div class="card-body">
+                        <h4 class="card-title text-center" id="card-title-B-2">耗氧治療的方案</h4>
+                        <p class="card-text ui_B_2"></p>
+                        <p class="card-text ui_B_2"></p>
+                        <p class="card-text ui_B_2"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p id="ui_D_1">D-1總：</p>
+    <p id="ui_D_2">D-2總評：</p>
+    <br>
+    <a id="downloadReport" href="#">下載 (12宮格頁面)</a>
+    <br><br>
+    <a id="back" href="qu.html">重新填問卷</a>
+</body>
+
+</html>
