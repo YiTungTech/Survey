@@ -305,55 +305,42 @@ function createGMergeParam(A, B_typeA, B_typeB, C, D) {
 }
 
 //下載檔案到local
-function saveAs(uri, filename) {
-    var link = document.createElement('a');
-    if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = filename;
-        //Firefox requires the link to be in the body
-        document.body.appendChild(link);
-        //simulate click
-        link.click();
-        //remove the link when done
-        // document.body.removeChild(link);//todo 測試暫時移除
-    } else {
-        window.open(uri);
-    }
+// function saveAs(uri, filename) {
+//     var link = document.createElement('a');
+//     if (typeof link.download === 'string') {
+//         link.href = uri;
+//         link.download = filename;
+//         //Firefox requires the link to be in the body
+//         document.body.appendChild(link);
+//         //simulate click
+//         link.click();
+//         //remove the link when done
+//         // document.body.removeChild(link);//todo 測試暫時移除
+//     } else {
+//         window.open(uri);
+//     }
     
-}
+// }
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('onclick_jquery_select4');
+        console.log('initDownloadButton()');
 
         html2canvas(document.querySelector("#capture")).then(canvas => {
-            // document.body.appendChild(canvas);
-            // $("#canvas_temp").appendChild(canvas);
-            // console.log('canvas.toDataURL()='+canvas.toDataURL("image/png"));
             // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-            alert('8');
+            alert('9');
 
             var link = document.createElement('a');
-              link.download = 'filename.jpg';
+              link.download = '優氧循環檢驗報告.jpg';
               link.href = canvas.toDataURL("image/jpeg",0.5);
               link.click();
-
-
-
-
         });
-
-        // html2canvas(document.querySelector("#canvas")).then(function(canvas) {
-        //     saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-        // });
-        // html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
-        //     saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-        // });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
         //     saveAs(canvas.toDataURL(), '詳細頁面.png');
         // });
     });
 
+    //是否顯示下載按鈕
     if (!isDownloadButtonShow()) {
         $("#downloadReport").hide();
     }
@@ -364,6 +351,7 @@ function initDownloadButton() {
 function isDownloadButtonShow(){
     var deviceAgent = navigator.userAgent.toLowerCase();
     console.log('deviceAgent='+deviceAgent);
+    alert(deviceAgent);
     var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
     if (agentID) {
         return false;
