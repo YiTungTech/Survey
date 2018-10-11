@@ -319,7 +319,7 @@ function saveAs(uri, filename) {
     } else {
         window.open(uri);
     }
-    alert('6');
+    
 }
 
 function initDownloadButton() {
@@ -327,8 +327,20 @@ function initDownloadButton() {
         console.log('onclick_jquery_select4');
 
         html2canvas(document.querySelector("#capture")).then(canvas => {
-            document.body.appendChild(canvas);
-            saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+            // document.body.appendChild(canvas);
+            // $("#canvas_temp").appendChild(canvas);
+            // console.log('canvas.toDataURL()='+canvas.toDataURL("image/png"));
+            // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+            alert('7');
+
+            var link = document.createElement('a');
+              link.download = 'filename.png';
+              link.href = canvas.toDataURL();
+              link.click();
+
+
+
+
         });
 
         // html2canvas(document.querySelector("#canvas")).then(function(canvas) {
