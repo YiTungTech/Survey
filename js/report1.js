@@ -328,11 +328,11 @@ function initDownloadButton() {
 
         html2canvas(document.querySelector("#capture")).then(canvas => {
             // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-            alert('9');
+            alert('10');
 
             var link = document.createElement('a');
               link.download = '優氧循環檢驗報告.jpg';
-              link.href = canvas.toDataURL("image/jpeg",0.5);
+              link.href = canvas.toDataURL("image/jpeg",0.3);
               link.click();
         });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
@@ -351,7 +351,8 @@ function initDownloadButton() {
 function isDownloadButtonShow(){
     var deviceAgent = navigator.userAgent.toLowerCase();
     console.log('deviceAgent='+deviceAgent);
-    alert(deviceAgent);
+    $("#agent").append(deviceAgent);
+    // alert(deviceAgent);
     var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
     if (agentID) {
         return false;
