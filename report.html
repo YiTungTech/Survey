@@ -4,383 +4,266 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- css -->
+    <title>優氧循環表</title>
+    <!-- css bootstrap-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="css/bootstrapDemo.css">
+    <!-- css bootstrap font -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- css main -->
+    <link rel="stylesheet" type="text/css" href="css/report2.css">
+    <!-- js jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- js bootstrap -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- js cookie -->
     <script src="js/js.cookie.js"></script>
+    <!-- js 儲存圖片 -->
     <script src="js/html2canvas.js"></script>
-    <script src="js/formula.js"></script>
-    <script type="text/javascript">
-    var gFormID = '1FAIpQLSf61A3kcoDVT929bta3X01AMaz4ieTDYwL2Ehz9FoHVuaIVnw'; //google 表單ID [for test CopyDown + Gmerge 版本 (Responses)]
-    var gSheetParam = {}; //google sheet所需要的參數
-
-    $(function() {
-        console.log('start()');
-        var config; //json格式的config設定檔
-        var qmconfig; //json格式的question mapping設定檔
-
-        initConfig();
-        initDownloadButton();
-
-        //-----解析gSheetRequestParam-----
-        //1. 提供method取得gSheetRequestParam參數
-        //2. 組合出google sheet url
-        $.extend({
-            getUrlVars: function() {
-                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-                var vars = [],
-                    hash; //目前不清楚vars型別是什麼?怎麼使用?
-                for (var i = 0; i < hashes.length; i++) {
-                    hash = hashes[i].split('=');
-                    vars.push(hash[0]);
-                    vars[hash[0]] = hash[1];
-                    //動態宣告gSheetParam物件的Object
-                    gSheetParam['entry.' + hash[0]] = decodeURIComponent(hash[1]);
-                }
-                return vars;
-            },
-            getUrlVar: function(name) {
-                //回傳http get參數
-                var result = $.getUrlVars()[name];
-                return typeof result != 'undefined' ? result : '1';
-            }
-        });
-
-
-        function initConfig() {
-            console.log('initConfig()');
-            // 讀取config檔案
-            $.ajax({
-                cache: false,
-                url: "config/config.json",
-                dataType: "json",
-                success: function(data) {
-                    config = data;
-                    initQuestionMapping();
-                }
-            });
-        }
-
-        function initQuestionMapping() {
-            console.log('initQuestionMapping()');
-            // 讀取config檔案
-            $.ajax({
-                cache: false,
-                url: "config/qmconfig.json",
-                dataType: "json",
-                success: function(data) {
-                    // console.log('initQuestionMapping() success');
-                    qmconfig = data;
-                    updateConfig();
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-
-            });
-        }
-
-
-        //將user的分數塞入config檔案
-        function updateConfig() {
-            console.log('updateConfig()');
-            $.each(config.session, function(i, item_session) {
-                //跑完所有question
-                $.each(item_session.question, function(j, item_question) {
-
-                    // console.log('getUrlVar='+$.getUrlVar(item_question.qid));
-                    // item_question.value = $.getUrlVar(item_question.qid); // json object set value
-
-                    //todo 問題還沒建立完成，所以部分item_question.qid會拿到空的qid
-                    var qid = $.getUrlVar(item_question.qid);
-                    if (typeof qid != 'undefined') {
-                        item_question.value = $.getUrlVar(item_question.qid); // json object set value    
-                    } else {
-                        item_question.value = '4'; //set default
-                    }
-                });
-            });
-            // console.log('config=' + JSON.stringify(config));
-            calculate();
-        }
-
-
-        //計算data
-        function calculate() {
-            console.log('calculate()');
-            var A = calculate_A(config, qmconfig);
-            var B_typeA = calculate_B_typeA(qmconfig);
-            var B_typeB = calculate_B_typeB(qmconfig);
-            var C = calculate_C(qmconfig);
-            var D = calculate_D(qmconfig);
-
-            updateUI(B_typeA);
-            updateUI_B_typeB(B_typeB);
-            updateUI_C(C);
-            updateUI_A(A);
-            updateUI_D(D);
-
-        }
-
-        //update UI
-
-        function updateUI_A(A) {
-            $.each(A, function(index, data) {
-                var outputTitle = '#ui_A_' + (index + 1) + '_1';
-                var outputDetail = '#ui_A_' + (index + 1) + '_2';
-                var title = A[index].title;
-                var detail = A[index].detail;
-                $(outputTitle).append(title);
-                $(outputDetail).append(detail);
-            });
-        }
-
-        function updateUI(B_typeA) {
-            $.each($('.ui_B_1'), function(index, data) {
-                var data_B_1 = B_typeA[0];
-                if ((index >= data_B_1.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+data_B_1[index].detail +'</p'
-                $(this).append(data_B_1[index].title);
-            });
-
-            $.each($('.ui_B_2'), function(index, data) {
-                var data_B_2 = B_typeA[1];
-                if ((index >= data_B_2.length)) return;
-                //todo 之後title跟detail要分開 +' <p> '+data_B_2[index].detail +'</p'
-                $(this).append(data_B_2[index].title);
-
-            });
-        }
-
-        function updateUI_B_typeB(B_typeB) {
-            $.each($('.ui_B_3'), function(index, data) {
-                var data_B_3 = B_typeB[0];
-                if ((index >= data_B_3.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+data_B_3[index].detail +'</p'
-                $(this).append(data_B_3[index].title);
-            });
-
-            $.each($('.ui_B_4'), function(index, data) {
-                var ui_B_4 = B_typeB[1];
-                if ((index >= ui_B_4.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+ui_B_4[index].detail +'</p'
-                $(this).append(ui_B_4[index].title);
-            });
-
-            //todo UI沒有顯示出B-5-1：
-            $.each($('.ui_B_5'), function(index, data) {
-                var ui_B_5 = B_typeB[2];
-                if ((index >= ui_B_5.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+ui_B_5[index].detail +'</p'
-                $(this).append(ui_B_5[index].title);
-            });
-
-        }
-
-
-        function updateUI_C(C) {
-            $.each($('.ui_C_1'), function(index, data) {
-                var data_C = C[0];
-                if ((index >= data_C.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+data_C[index].detail +'</p'
-                $(this).append(data_C[index].title);
-            });
-
-            $.each($('.ui_C_2'), function(index, data) {
-                var data_C = C[1];
-                if ((index >= data_C.length)) return; //超過長度
-                //todo 之後title跟detail要分開 +' <p> '+data_C[index].detail +'</p'
-                $(this).append(data_C[index].title);
-            });
-
-        }
-
-        function updateUI_D(D) {
-            $('#ui_D_1').append(D.title);
-            $('#ui_D_2').append(D.detail);
-        }
-
-        //todo: 截圖功能先不用在這裡寫 (demo已經有寫了)
-
-
-    });
-
-    //send gooogle sheet request
-    function gSheetRequestParam() {
-
-        console.log('gSheetParam=' + JSON.stringify(gSheetParam));
-        $.ajax({
-            url: 'https://docs.google.com/forms/d/e/' + gFormID + '/formResponse',
-            data: gSheetParam,
-            type: "POST",
-            dataType: "xml",
-            statusCode: {
-                0: function() {
-                    console.log('Success message');
-                },
-                200: function() {
-                    console.log('Success message');
-                }
-            }
-        });
-    }
-
-    //下載檔案到local
-    function saveAs(uri, filename) {
-        var link = document.createElement('a');
-        if (typeof link.download === 'string') {
-            link.href = uri;
-            link.download = filename;
-            //Firefox requires the link to be in the body
-            document.body.appendChild(link);
-            //simulate click
-            link.click();
-            //remove the link when done
-            document.body.removeChild(link);
-        } else {
-            window.open(uri);
-        }
-    }
-
-    function initDownloadButton() {
-        $("#downloadReport").on('click', function() {
-        console.log('onclick');
-        html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
-            saveAs(canvas.toDataURL(), '12宮格頁面.png');
-        });
-        // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
-        //     saveAs(canvas.toDataURL(), '詳細頁面.png');
-        // });
-    });
-    }
-
-    </script>
+    <!-- js common -->
+    <script src="js/common.js"></script>
+    <!-- js 公式 -->
+    <script src="js/formula3.js"></script>
+    <!-- js report -->
+    <script src="js/report1.js"></script>
 </head>
 
 <body>
-    <table width="100%" style="margin: 40px 0px 40px 0px;">
-        <tr>
-            <td style="width: 25%; text-align: center;">
-                <img src="image/bootstrapDemo/logo.jpg">
-            </td>
-            <td style="width: 50%;text-align: center;">
-                <div style="color: #34d6b7; font-size: 1.0em">My Oxygener Report
-                </div>
-                <div style="color: #404040; font-size: 3.0em">優氧報告結果：
-                </div>
-            </td>
-            <td style="width: 25%;text-align: center;"></td>
-        </tr>
-    </table>
-    <div id="table_canvas">
-        <div class="container">
-            <div class="card-columns card-columns-header">
-                <div class="card card-grid-top" id="card-C-2">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-C-2">創造有利條件的方法</h4>
-                        <p class="card-text ui_C_2"></p>
-                        <p class="card-text ui_C_2"></p>
-                        <p class="card-text ui_C_2"></p>
-                    </div>
-                </div>
-                <div class="card card-grid-top" id="card-C-1">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-C-1">聚焦內在的方法</h4>
-                        <p class="card-text ui_C_1"></p>
-                        <p class="card-text ui_C_1"></p>
-                        <p class="card-text ui_C_1"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="card-columns">
-                <div class="card card-grid-middle-large" id="card-A-1">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-A-1">供給性缺氧檢驗數據</h4>
-                        <p class="card-text" id="ui_A_1_1">供氧不足分析 : </p>
-                        <p class="card-text" id="ui_A_1_2"></p>
-                    </div>
-                </div>
-                <div class="card  card-grid-middle-large" id="card-A-2">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-A-2">耗損性缺氧檢驗數據</h4>
-                        <p class="card-text" id="ui_A_2_1">能量透支分析 : </p>
-                        <p class="card-text" id="ui_A_2_2"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-A-3">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-A-3">熱性體質檢驗數據</h4>
-                        <p class="card-text" id="ui_A_3_1">損傷發炎程度 : </p>
-                        <p class="card-text" id="ui_A_3_2"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-A-4">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-A-4">濕性體質檢驗數據</h4>
-                        <p class="card-text" id="ui_A_4_1">循環淤滯程度 : </p>
-                        <p class="card-text" id="ui_A_4_2"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-A-5">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-A-5">寒性體質檢驗數據</h4>
-                        <p class="card-text" id="ui_A_5_1">失調衰退程度 : </p>
-                        <p class="card-text" id="ui_A_5_2"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-B-3">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-B-3">免疫代謝的方案</h4>
-                        <p class="card-text ui_B_3"></p>
-                        <p class="card-text ui_B_3"></p>
-                        <p class="card-text ui_B_3"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-B-4">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-B-4">微循環改善的方案</h4>
-                        <p class="card-text ui_B_4"></p>
-                        <p class="card-text ui_B_4"></p>
-                        <p class="card-text ui_B_4"></p>
-                    </div>
-                </div>
-                <div class="card" id="card-B-5">
-                    <div class="card-body card-grid-middle-small">
-                        <h4 class="card-title text-center" id="card-title-B-5">機能復甦的方案</h4>
-                        <p class="card-text ui_B_5"></p>
-                        <p class="card-text ui_B_5"></p>
-                        <p class="card-text ui_B_5"></p>
-                    </div>
-                </div>
-                <div class="card card-grid-middle-large" id="card-B-1">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-B-1">供養治療的方案</h4>
-                        <p class="card-text ui_B_1"></p>
-                        <p class="card-text ui_B_1"></p>
-                        <p class="card-text ui_B_1"></p>
-                    </div>
-                </div>
-                <div class="card card-grid-middle-large" id="card-B-2">
-                    <div class="card-body">
-                        <h4 class="card-title text-center" id="card-title-B-2">耗氧治療的方案</h4>
-                        <p class="card-text ui_B_2"></p>
-                        <p class="card-text ui_B_2"></p>
-                        <p class="card-text ui_B_2"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="loading">
+        <img id="loadingimg" class="img-fluid" alt="Responsive image" src="image/report/loading.jpg">
     </div>
-    <p id="ui_D_1">D-1總：</p>
-    <p id="ui_D_2">D-2總評：</p>
-    <br>
-    <a id="downloadReport" href="#">下載 (12宮格頁面)</a>
-    <br><br>
-    <a id="back" href="qu.html">重新填問卷</a>
+
+
+    <div id="report">
+
+        <!-- 12宮格 -->
+        <div id="table_canvas">
+            <div>
+                <table class="container-fluid mt-3 mb-3 mt-lg-5  mb-lg-5">
+                    <tr>
+                        <td style="width: 25%; text-align: center;">
+                            <img class="img-fluid pl-2" alt="Responsive image" src="image/report/logo.jpg">
+                        </td>
+                        <td style="width: 50%;text-align: center;">
+                            <div>
+                                <img class="img-fluid pl-2" alt="Responsive image" src="image/report/title.jpg">
+                        </td>
+                        <td style="width: 25%;text-align: center;"></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="text-align: center;">
+                <p class="font-blod mt-4 general-text" id="ui_D_1"></p>
+                <p class="font-blod mb-4 general-text" id="ui_D_2"></p>
+            </div>
+            <div class="container pt-3 pt-lg-5">
+                <div class="card-columns card-columns-header">
+                    <div class="card card-grid-top" id="card-C-2">
+                        <div class="card-body">
+                            <h4 class="card-title text-center" id="card-title-C-2">創造有利條件</h4>
+                            <p class="card-text" id="card-C-2-default">顯然您已成功克服那些在生活中經常阻礙我們達成目標的誘惑！</p>
+                            <ol class="pl-2 pl-lg-4">
+                                <li class="card-text ui_C_2"></li>
+                                <li class="card-text ui_C_2"></li>
+                                <li class="card-text ui_C_2"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card card-grid-top" id="card-C-1">
+                        <div class="card-body">
+                            <h4 class="card-title text-center" id="card-title-C-1">聚焦內在的方法</h4>
+                            <p class="card-text" id="card-C-1-default">「目標」是行為的趨力，顯然您已確實掌握目標，毋忘初衷。</p>
+                            <ol class="pl-2 pl-lg-4">
+                                <li class="card-text ui_C_1"></li>
+                                <li class="card-text ui_C_1"></li>
+                                <li class="card-text ui_C_1"></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="card-columns">
+                    <div class="card card-grid-middle-large" id="card-A-1">
+                        <div class="card-body pl-2">
+                            <h4 class="card-title text-center" id="card-title-A-1">供給性缺氧</h4>
+                            <p class="card-text" id="ui_A_1_1">指數◆ </p>
+                            <p class="card-text" id="ui_A_1_2"></p>
+                        </div>
+                    </div>
+                    <div class="card  card-grid-middle-large" id="card-A-2">
+                        <div class="card-body pl-2">
+                            <h4 class="card-title text-center" id="card-title-A-2">耗損性缺氧</h4>
+                            <p class="card-text" id="ui_A_2_1">指數◆ </p>
+                            <p class="card-text" id="ui_A_2_2"></p>
+                        </div>
+                    </div>
+                    <div class="card" id="card-A-3">
+                        <div class="card-body card-grid-middle-small pl-2">
+                            <h4 class="card-title text-center" id="card-title-A-3">熱性體質</h4>
+                            <p class="card-text" id="ui_A_3_1">指數◆ </p>
+                            <p class="card-text" id="ui_A_3_2"></p>
+                        </div>
+                    </div>
+                    <div class="card" id="card-A-4">
+                        <div class="card-body card-grid-middle-small pl-2">
+                            <h4 class="card-title text-center" id="card-title-A-4">濕性體質</h4>
+                            <p class="card-text" id="ui_A_4_1">指數◆ </p>
+                            <p class="card-text" id="ui_A_4_2"></p>
+                        </div>
+                    </div>
+                    <div class="card" id="card-A-5">
+                        <div class="card-body card-grid-middle-small pl-2">
+                            <h4 class="card-title text-center" id="card-title-A-5">寒性體質</h4>
+                            <p class="card-text" id="ui_A_5_1">指數◆ </p>
+                            <p class="card-text" id="ui_A_5_2"></p>
+                        </div>
+                    </div>
+                    <div class="card" id="card-B-3">
+                        <div class="card-body card-grid-middle-small">
+                            <h4 class="card-title text-center" id="card-title-B-3">免疫代謝治療</h4>
+                            <p class="card-text" id="card-B-3-default">您的代謝情形良好，無活躍的損傷發炎反應。</p>
+                            <ol class="pl-2">
+                                <li class="card-text ui_B_3"></li>
+                                <li class="card-text ui_B_3"></li>
+                                <li class="card-text ui_B_3"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card" id="card-B-4">
+                        <div class="card-body card-grid-middle-small">
+                            <h4 class="card-title text-center" id="card-title-B-4">微循環治療</h4>
+                            <p class="card-text" id="card-B-4-default">您的循環狀況良好，無明顯瘀滯現象。</p>
+                            <ol class="pl-2">
+                                <li class="card-text ui_B_4"></li>
+                                <li class="card-text ui_B_4"></li>
+                                <li class="card-text ui_B_4"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card" id="card-B-5">
+                        <div class="card-body card-grid-middle-small">
+                            <h4 class="card-title text-center" id="card-title-B-5">機能復甦治療</h4>
+                            <p class="card-text" id="card-B-5-default">您的身體機能運作正常，無顯著失調現象。</p>
+                            <ol class="pl-2">
+                                <li class="card-text ui_B_5"></li>
+                                <li class="card-text ui_B_5"></li>
+                                <li class="card-text ui_B_5"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card card-grid-middle-large" id="card-B-1">
+                        <div class="card-body">
+                            <h4 class="card-title text-center" id="card-title-B-1">供氧治療</h4>
+                            <p class="card-text" id="card-B-1-default">您的供氧能力尚佳，請繼續保持。</p>
+                            <ol class="pl-2">
+                                <li class="card-text ui_B_1"></li>
+                                <li class="card-text ui_B_1"></li>
+                                <li class="card-text ui_B_1"></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card card-grid-middle-large" id="card-B-2">
+                        <div class="card-body">
+                            <h4 class="card-title text-center" id="card-title-B-2">耗氧治療</h4>
+                            <p class="card-text" id="card-B-2-default">您沒有嚴重的能量透支情形，請持續留意。</p>
+                            <ol class="pl-2">
+                                <li class="card-text ui_B_2"></li>
+                                <li class="card-text ui_B_2"></li>
+                                <li class="card-text ui_B_2"></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <p class="font-blod general-text">建議您可定期進行專家系統自我檢測！檢驗改善成效，掌握自身狀態</p>
+            </div>
+        </div>
+        <!-- 12宮格 -->
+
+        <!-- 固定內容 -->
+        <div class="container">
+            <div class="text-center">
+                <a id="downloadReport" href="#"><img src="image/report/btn_restart.jpg" class="img-fluid p-2" alt="Responsive image"></a>
+                <a id="back" href="index.html"><img src="image/report/btn_back.jpg" class="img-fluid p-2" alt="Responsive image">
+                </a>
+            </div>
+
+            <div class="text-center mt-5">
+                <img class="img-fluid" alt="Responsive image" src="image/report/content_top.jpg">
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="https://lihi.cc/mjaAa" target="_blank"><img class="img-fluid pl-2" alt="Responsive image" src="image/report/btn_reservation.jpg"></a>
+            </div>
+            <div class="text-center mt-5">
+                <img class="img-fluid" alt="Responsive image" src="image/report/content_bottom.jpg">
+            </div>
+            <div class="container">
+                <div class="text-center mt-5 align-baseline">
+                    <a href="https://www.oxygener.com" target="_blank"><img class="img-fluid" alt="Responsive image" src="image/report/contact_web.jpg"></a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="https://zh-tw.facebook.com/Oxygener.fanpage/" target="_blank"><img class="img-fluid" alt="Responsive image" src="image/report/contact_fb.jpg"></a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="line://ti/p/@oxygener">
+                        <img class="img-fluid" alt="Responsive image" src="image/report/contact_line.jpg">
+                    </a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="tel:+88662979053"><img class="img-fluid" alt="Responsive image" src="image/report/contact_tel.jpg"></a>
+                </div>
+                <div class="text-center mt-3 mb-5">
+                    <a href="mailto:service@oxygener.com"><img class="img-fluid" alt="Responsive image" src="image/report/contact_email.jpg">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <!-- Footer -->
+        <section id="footer">
+            <div class="container">
+                <div class="row text-center text-xs-center text-sm-left text-md-left align-items-end">
+                    <!-- left -->
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                        <img  class="img-fluid p-2" alt="Responsive image" src="image/report/footer_logo.png">
+                    </div>
+                    <!-- middle -->
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-6">
+                        <ul class="list-unstyled list-inline social text-center">
+                            <li class="list-inline-item p-2"><a href="https://zh-tw.facebook.com/Oxygener.fanpage/" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                            <li class="list-inline-item p-2"><a href="https://www.instagram.com/shirleyoxygen/"><i class="fa fa-instagram"></i></a></li>
+                            <li class="list-inline-item p-2"><a href="mailto:service@oxygener.com"><i class="fa fa-envelope"></i></a></li>
+                        </ul>
+                    </div>
+                    <!-- right -->
+                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+                        <a href="tel:+88662979053">
+                            <img  class="img-fluid p-2" alt="Responsive image" src="image/report/footer_tel.png">
+                        </a>
+                        <a href="mailto:service@oxygener.com">
+                            <img  class="img-fluid p-2" alt="Responsive image" src="image/report/footer_email.png">
+                        </a>
+                        <a href="https://www.oxygener.com" target="_blank">
+                            <img  class="img-fluid p-2" alt="Responsive image" src="image/report/footer_web.png">
+                        </a>
+                    </div>
+                </div>
+                <!-- bottom -->
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white  col-lg-12">
+                        <p>本網站文字圖片版權所有為奧斯帝摩生醫科技股份有限公司 轉載必究</p>
+                        <p class="h6">Taiwan Oxygener Biomedical Tech. Co., Ltd.©2018 Copyright. All Rights Reserved
+                    </div>
+                    </hr>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    
 </body>
 
 </html>

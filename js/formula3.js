@@ -13,10 +13,16 @@ function calculate_A(config, qmconfig) {
     var totalScoreArray = []; //所有session分數陣列 -> 為了取最大值 (將5大類分數陳列)
     var totalSumScore = 0; //所有session分數加總 -> 為了取平均值 (將5大類分數累加)
 
-    $.each(config.session, function(i, item_session) {
+    $.each(config.session, function(sIndex, item_session) {
+
+        if (sIndex >4) {
+            // console.log('已經超過5個session，第6個自控力');
+            return false;
+        }
+
         // console.log('item_session='+JSON.stringify(item_session));
-        var scoreArray = []; //單一session所有問題，轉換成分數陣列	-> 為了取最大值
-        var sumScore = 0; //單一session所有問題的分數加總 		-> 為了取平均值
+        var scoreArray = []; //單一session所有問題，轉換成分數陣列    -> 為了取最大值
+        var sumScore = 0; //單一session所有問題的分數加總      -> 為了取平均值
 
         $.each(item_session.question, function(j, item_question) {
             var score = valueToScore(parseInt(item_question.value));
@@ -38,28 +44,24 @@ function calculate_A(config, qmconfig) {
         totalSumScore += temp;
         totalScoreArray.push(temp);
         uiValue.push(Math.round(temp * 10) / 10);
-
     });
 
-    //根據分數，取得對應range文字wording
+    //根據各項分數(供、耗、熱、濕、寒)，取得對應文字wording
     //耦合高，暫時維持現狀。
     var targetArray = uiValue;
     var compareArray = qmconfig.A.A_compare;
     $.each(targetArray, function(sIndex, value) {
         var target = targetArray[sIndex];
         $.each(compareArray, function(mIndex, compare) {
-            if (target < compare) {
+            if (target <= compare) {
 
-                //todo qmconfig mapping表還沒設定完成，所以wording會有空值
-                var titl;
+                var title;
                 try {
                     title = qmconfig.A.session[sIndex].question[mIndex].title;
-                } catch (e) {
-
-                }
-                wording = (typeof title != 'undefined') ? title : '還沒設定';
+                } catch (e) {console.log(e);}
+                wording = (typeof title != 'undefined') ? title : 'SETTING ERROR';
                 // var wording = qmconfig.A.session[sIndex].question[mIndex].title;
-
+                // console.log('targetArray[sIndex]' + targetArray[sIndex] + ' wording=' + wording);
                 resultArray.push(new DataTypeB(targetArray[sIndex], wording));
                 return false;
             }
@@ -68,13 +70,12 @@ function calculate_A(config, qmconfig) {
 
     //計算D-1
     var tempValueMax = Math.max.apply(null, totalScoreArray);
-    var tempValueAverage = (totalSumScore / config.session.length);
+    var tempValueAverage = (totalSumScore / 5);//不能使用config.session.length當分母，因為單項平均分數不包含自控力。因此直接hardcode分母=5
     //1.綜合平均值 2.取4捨5入到小數第1位
     uiTotalValue = (tempValueMax + tempValueAverage) / 2;
     uiTotalValue = Math.round(uiTotalValue * 10) / 10;
 
     // console.log('resultArray=' + JSON.stringify(resultArray));
-
     return resultArray;
 }
 
@@ -110,14 +111,14 @@ function calculate_B_typeA(qmconfig) {
                 //第3項需要顯示「運動處方建議」，因此不增加「生活型態建議」
                 return false;
             }
-            //todo title 「生活型態建議」要拿掉
-            tempArray.push(new DataTypeB('「生活型態建議」' + item_singleadvisement.title, item_singleadvisement.detail));
+            //生活型態建議
+            tempArray.push(new DataTypeB(item_singleadvisement.title, item_singleadvisement.detail));
 
         });
 
         if (isNeedExercise && tempExerciseArray.length > 0) {
-            //todo title 「運動處方建議」要拿掉
-            tempArray.push(new DataTypeB('「運動處方建議」' + tempExerciseArray[0].title, tempExerciseArray[0].detail));
+            //運動處方建議
+            tempArray.push(new DataTypeB(tempExerciseArray[0].title, tempExerciseArray[0].detail));
         }
         uiResult.push(tempArray);
     });
@@ -136,14 +137,14 @@ function calculate_B_typeB(qmconfig) {
 
     //each session
     $.each(qmconfig.B_typeB.session, function(sIndex, item_session) {
-        var tempUiValue = uiValue[sIndex+2];        // session平均值
-        var tempArray = [];                         // 暫存存放
-        var tempLifeArray = [];                     //「生活型態建議」陣列
+        var tempUiValue = uiValue[sIndex + 2]; // session平均值
+        var tempArray = []; // 暫存存放
+        var tempLifeArray = []; //「生活型態建議」陣列
 
         //【排序規則一】飲食處方第一優先
         //【排序規則二】運動處方第二順位
         var isNeedFood = tempUiValue > qmconfig.B_typeB.B_typeB1_food;
-        console.log('isNeedFood='+isNeedFood+' uiValue[sIndex]='+tempUiValue +' qmconfig.B_typeB.B_typeB1_food='+qmconfig.B_typeB.B_typeB1_food);
+        // console.log('isNeedFood='+isNeedFood+' uiValue[sIndex]='+tempUiValue +' qmconfig.B_typeB.B_typeB1_food='+qmconfig.B_typeB.B_typeB1_food);
         var isNeedExercise = tempUiValue > qmconfig.B_typeB.B_typeB1_exercise;
         if (isNeedFood) { tempArray.push(new DataTypeB(item_session.food.title, item_session.food.detail)); }
         if (isNeedExercise) { tempArray.push(new DataTypeB(item_session.exercise.title, item_session.exercise.detail)); }
@@ -158,8 +159,8 @@ function calculate_B_typeB(qmconfig) {
                 //最多只取3項目
                 return false;
             }
-            //todo title 「生活型態建議」要拿掉
-            tempArray.push(new DataTypeB('「生活型態建議」' + item_tempLift.title, item_tempLift.detail));
+            //生活型態建議
+            tempArray.push(new DataTypeB(item_tempLift.title, item_tempLift.detail));
 
         });
 
@@ -206,47 +207,68 @@ function calculate_C(qmconfig) {
 
 //1. -----C----- D-[1-4]
 function calculate_D(qmconfig) {
-
-    //todo 總分的評語尚未處理 , 在這裡把D-[1-4]組起來，wording先寫在程式裡面。
-
     console.log('calculate_D()');
     var resultTitle = uiTotalValue; //總分
     var resultDatail = ''; //總分建議
     var scoreArray = uiValue; //各項分數
 
+    //--------title--------
+    resultTitle = qmconfig.D.D_1[0].title + ' ' + uiTotalValue + '，';
+    // console.log(resultTitle);
+    //D-1
+    // resultDatail += qmconfig.D.D_1[0].title;
     //D-2
     //根據分數，取得對應range文字wording
     //耦合高，暫時維持現狀。
     var compareArray = qmconfig.D.D_compare;
-    var target = resultTitle;
+    var target = uiTotalValue;
+    
     $.each(compareArray, function(mIndex, compare) {
-        if (target < compare) {
-            resultDatail += qmconfig.D.D_2[mIndex].title;
+        // console.log('compare='+compare +' target='+target);
+        if (target <= compare) {
+            resultTitle += qmconfig.D.D_2[mIndex].title;
             return false;
         }
     });
+    //--------title--------
 
+    //--------detail--------
     //D-3
     if (scoreArray[0] > scoreArray[1] && scoreArray[0] > 2) {
         resultDatail += qmconfig.D.D_3[0].title;
     } else if (scoreArray[1] >= scoreArray[0] && scoreArray[1] > 2) {
         resultDatail += qmconfig.D.D_3[1].title;
-    } else if (scoreArray[0] < 2 && scoreArray[1] < 2) {
-        resultDatail += qmconfig.D.D_3[2].title;
-    } else if (scoreArray[0] < 2 && scoreArray[1] < 2 && scoreArray[2] < 3 && scoreArray[3] < 3 && scoreArray[4] < 3) {
+    } else if (scoreArray[0] <= 2 && scoreArray[1] <= 2 && scoreArray[2] <= 3 && scoreArray[3] <= 3 && scoreArray[4] <= 3) {
         resultDatail += qmconfig.D.D_3[3].title;
+    } else if (scoreArray[0] <= 2 && scoreArray[1] <= 2) {
+        resultDatail += qmconfig.D.D_3[2].title;
+    } else {
+        resultDatail += "";
     }
 
     //D-4
     if (scoreArray[2] > scoreArray[3] && scoreArray[2] > scoreArray[4] && scoreArray[2] > 3) {
+        // console.log('D-1');
         resultDatail += qmconfig.D.D_4[0].title;
-    } else if (scoreArray[3] > scoreArray[2] && scoreArray[3] > scoreArray[4] && scoreArray[3] > 3) {
+    } else if (scoreArray[3] >= scoreArray[2] && scoreArray[3] >= scoreArray[4] && scoreArray[3] > 3) {
+        // console.log('D-2');
         resultDatail += qmconfig.D.D_4[1].title;
-    } else if (scoreArray[4] > scoreArray[2] && scoreArray[4] > scoreArray[3] && scoreArray[4] > 3) {
+    } else if (scoreArray[4] >= scoreArray[2] && scoreArray[4] > scoreArray[3] && scoreArray[4] > 3) {
+        // console.log('D-3');
         resultDatail += qmconfig.D.D_4[2].title;
-    } else {
+    } else if (scoreArray[0] <= 2 && scoreArray[1] <= 2 && scoreArray[2] <= 3 && scoreArray[3] <= 3 && scoreArray[4] <= 3) {
+        // console.log('D-4');
         resultDatail += qmconfig.D.D_4[3].title;
+    } else if (scoreArray[2] <= 3 && scoreArray[3] <= 3 && scoreArray[4] <= 3) {
+        // console.log('D-5');
+        resultDatail += qmconfig.D.D_4[4].title;
+    } else {
+        // console.log('D-else');
+        if (resultDatail.charAt(resultDatail.length - 1) == '，') {
+            resultDatail = resultDatail.substring(0, resultDatail.length - 1);
+        }
     }
+    //--------detail--------
 
     return new DataTypeB(resultTitle, resultDatail);
 }
@@ -294,7 +316,7 @@ function getExerciseArray(session, isNeedExercise) {
                 //【排序規則一】問題1~4換算出的分數相加
                 var totalScore = 0;
                 $.each(qidGroup, function(qidIndex, item_qidGroup) {
-                    totalScore += valueToScore(parseInt($.getUrlVar(item_qidGroup.qid)));
+                    totalScore += valueToScore(parseInt(getUrlVar(item_qidGroup.qid)));
                 });
                 return totalScore;
             }
@@ -316,23 +338,23 @@ function getExerciseArray(session, isNeedExercise) {
 /**
 1. 取得答題分數符合條件的題目 2.排序
 input
-session 		: {MEMO,question,question.id,sort}
-isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
+session         : {MEMO,question,question.id,sort}
+isNeedQuestion  : 分數大於config設定，符合條件，加入陣列
 */
 function getQuestionArray(session, isNeedQuestion) {
-	console.log('getQuestionArray()');
+    console.log('getQuestionArray()');
     var resultLifeArray = getFilterArray(session, isNeedQuestion); //取得符合資格陣列「生活型態建議」陣列
     // console.log('要顯示的生活型態: session='+session.MEMO+' resultLifeArray='+JSON.stringify(resultLifeArray ));
     // 「生活型態建議」排序
-    //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。	
+    //【建議排序規則一】依照各題填答結果換算出的分數高低，由高至低排序。 
     //【建議排序規則二】同分時，依照各建議優先順序設定排序。(參考表3欄位「生活排序規則2」)
     // console.log(session.MEMO + '「生活型態建議」排序前=' + JSON.stringify(resultLifeArray));
     resultLifeArray.sort(function(a, b) {
         function cmp(x, y) {
             return x > y ? 1 : (x < y ? -1 : 0); //等於的時候不要動
         }
-        var scoreA = valueToScore(parseInt($.getUrlVar(a.qid)));
-        var scoreB = valueToScore(parseInt($.getUrlVar(b.qid)));
+        var scoreA = valueToScore(parseInt(getUrlVar(a.qid)));
+        var scoreB = valueToScore(parseInt(getUrlVar(b.qid)));
         return cmp(scoreB, scoreA) || cmp(a.sort, b.sort); //return score是第一條件，sort為第2條件
     });
 
@@ -343,8 +365,8 @@ function getQuestionArray(session, isNeedQuestion) {
 /**
 取得答題分數符合條件的題目，並回傳陣列
 input
-session 		: {question,question.qid}
-isNeedQuestion 	: 分數大於config設定，符合條件，加入陣列
+session         : {question,question.qid}
+isNeedQuestion  : 分數大於config設定，符合條件，加入陣列
 */
 function getFilterArray(session, condition) {
     var filterArray = [];
@@ -352,10 +374,9 @@ function getFilterArray(session, condition) {
     // console.log('session=' + JSON.stringify(session));
 
     $.each(session.question, function(qIndex, item_question) {
-    	//todo $.getUrlVar(item_question.qid) 這裡可能會抓到空的
 
-        var score = parseInt($.getUrlVar(item_question.qid));
-        
+        var score = parseInt(getUrlVar(item_question.qid));
+
         score = valueToScore(score);
         // console.log('item_question score=' + score);
 

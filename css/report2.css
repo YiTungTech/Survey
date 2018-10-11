@@ -1,3 +1,22 @@
+/*字型*/
+.font-blod,
+.card-title {
+    font-family: MicrosoftJhengHeiBold, LiHei Pro;
+}
+
+.font-regular,
+.card-text {
+    font-family: 微軟正黑體, Heiti TC;
+}
+
+/*一般字體*/
+.general-text {
+    font-size: 1.0em;
+}
+
+/*檢驗報告上方title*/
+
+
 /*卡片title文字顏色*/
 
 #card-title-A-1,
@@ -84,9 +103,10 @@
 
 
 .card-title {
-    margin: 0px 0px 20px 0px;
+    margin: 0px 0px 15px 0px;
     /*title下方的margin*/
-    font-size: 1.4em/*title size*/
+    font-size: 1.4em
+        /*title size*/
 }
 
 /*限制文字行數不能超過2行，文字超過行數用...代替*/
@@ -107,22 +127,15 @@
     padding-right: 1em;
 }
 
-.card-title,
+/* 取消限制2行，從縮減文字出發 */
+/*.card-title,
 .card-text,
 #card-B-3>.card-body>.card-text,
 #card-B-4>.card-body>.card-text,
 #card-B-5>.card-body>.card-text {
-    /* hide text if it more than N lines  */
     overflow: hidden;
-    /* for set '...' in absolute position */
     position: relative;
-    /* use this value to count block height */
-    /*line-height: 1.2em;*/
-    /* max-height = line-height (1.2) * lines max number (3) */
-    /*max-height: 2.4em;*/
-    /* fix problem when last visible word doesn't adjoin right side  */
     text-align: justify;
-    /* place for '...' */
     margin-right: -1em;
     padding-right: 1em;
 }
@@ -137,32 +150,21 @@
     max-height: 2.4em;
 }
 
-/* create the ... */
 .card-text:before {
-    /* points in the end */
     content: '...';
-    /* absolute position */
     position: absolute;
-    /* set position to right bottom corner of block */
     right: 0;
     bottom: 0;
 }
 
-
-/* hide ... if we have text, which is less than or equal to max lines */
-
 .card-text:after {
-    /* points in the end */
     content: '';
-    /* absolute position */
     position: absolute;
-    /* set position to right bottom corner of text */
     right: 0;
-    /* set width and height */
     width: 1em;
     height: 1em;
     margin-top: 0.2em;
-}
+}*/
 
 .card-grid-top {}
 
@@ -181,6 +183,7 @@
     /*row之間的距離*/
     border-color: #34d6b7;
     border-radius: 0;
+    border-width: 3px;
 }
 
 
@@ -188,32 +191,38 @@
     column-count: 1;
 }
 
+
 @media (min-width: 576px) {}
 
 @media (min-width: 768px) {}
 
 @media (min-width: 992px) {
 
-	.card-title {
-		font-size: 1.3em;
-	}
+    .general-text {
+        font-size: 1.4em;
+    }
+
+    .card-title {
+        font-size: 1.3em;
+    }
 
     .card-columns {
         column-count: 4;
     }
+
     .card-columns-header {
         column-count: 2;
     }
 
     /*限制card的高度*/
     .card-grid-top {
-        min-height: 180px;
-        max-height: 180px;
+        min-height: 200px;
+        max-height: 200px;
     }
 
     .card-grid-middle-large {
-        min-height: 339px;
-        max-height: 339px;
+        min-height: 345px;
+        max-height: 345px;
     }
 
     .card-grid-middle-small {
@@ -222,17 +231,108 @@
     }
 
     /*C-1,C-2 內縮margin*/
-.card-grid-top .card-body {
-    margin: 0px 20px 0px 20px;
-}
+    .card-grid-top .card-body {
+        /*margin: 0px 10px 0px 10px;*/
+    }
 }
 
 @media (min-width: 1200px) {
     /*C-1,C-2 內縮margin*/
-    .card-grid-top .card-body {
-    margin: 0px 40px 0px 40px;
+    /*.card-grid-top .card-body {
+    margin: 0px 40px 0px 40px;*/
 }
-	.card-title {
-		font-size: 1.6em;
-	}
+
+.card-title {
+    font-size: 1.6em;
+}
+
+
+
+/* Footer */
+/*@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');*/
+
+section {
+    padding: 30px 0;
+}
+
+section .section-title {
+    text-align: center;
+    color: #007b5e;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+#footer {
+    background: #345664 !important;
+}
+
+#footer h5 {
+    padding-left: 10px;
+    border-left: 3px solid #eeeeee;
+    padding-bottom: 6px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+#footer a {
+    color: #ffffff;
+    text-decoration: none !important;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+
+#footer ul.social li {
+    padding: 3px 0;
+}
+
+#footer ul.social li a i {
+    margin-right: 5px;
+    font-size: 25px;
+    -webkit-transition: .5s all ease;
+    -moz-transition: .5s all ease;
+    transition: .5s all ease;
+}
+
+#footer ul.social li:hover a i {
+    font-size: 30px;
+    margin-top: -10px;
+}
+
+#footer ul.social li a,
+#footer ul.quick-links li a {
+    color: #ffffff;
+}
+
+#footer ul.social li a:hover {
+    color: #eeeeee;
+}
+
+#footer ul.quick-links li {
+    padding: 3px 0;
+    -webkit-transition: .5s all ease;
+    -moz-transition: .5s all ease;
+    transition: .5s all ease;
+}
+
+#footer ul.quick-links li:hover {
+    padding: 3px 0;
+    margin-left: 5px;
+    font-weight: 700;
+}
+
+#footer ul.quick-links li a i {
+    margin-right: 5px;
+}
+
+#footer ul.quick-links li:hover a i {
+    font-weight: 700;
+}
+
+@media (max-width:767px) {
+    #footer h5 {
+        padding-left: 0;
+        border-left: transparent;
+        padding-bottom: 0px;
+        margin-bottom: 10px;
+    }
 }
