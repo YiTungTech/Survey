@@ -342,7 +342,6 @@ function initDownloadButton() {
 function isDownloadButtonShow(){
     var deviceAgent = navigator.userAgent.toLowerCase();
     console.log('deviceAgent='+deviceAgent);
-    alert('deviceAgent='+deviceAgent);
     var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
     if (agentID) {
         return false;
