@@ -331,11 +331,11 @@ function initDownloadButton() {
             // $("#canvas_temp").appendChild(canvas);
             // console.log('canvas.toDataURL()='+canvas.toDataURL("image/png"));
             // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-            alert('7');
+            alert('8');
 
             var link = document.createElement('a');
-              link.download = 'filename.png';
-              link.href = canvas.toDataURL();
+              link.download = 'filename.jpg';
+              link.href = canvas.toDataURL("image/jpeg",0.5);
               link.click();
 
 
