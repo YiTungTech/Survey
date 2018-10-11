@@ -3,7 +3,7 @@ var gSheetParam = {}; //google sheet所需要的參數
 var config; //json格式的config設定檔
 var isNeedInsert = false;
 var reportLink = '';//insert google sheet的連結，不會重複insert google sheet
-
+var deviceAgent = navigator.userAgent.toLowerCase();//裝置agent
 
 $(function() {
     console.log('start() ver=5');
@@ -324,15 +324,13 @@ function createGMergeParam(A, B_typeA, B_typeB, C, D) {
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('initDownloadButton()');
+        console.log('initDownloadButton()11');
 
         html2canvas(document.querySelector("#capture")).then(canvas => {
             // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-            alert('10');
-
             var link = document.createElement('a');
               link.download = '優氧循環檢驗報告.jpg';
-              link.href = canvas.toDataURL("image/jpeg",0.3);
+              link.href = canvas.toDataURL("image/jpeg",0.5);
               link.click();
         });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
@@ -340,26 +338,40 @@ function initDownloadButton() {
         // });
     });
 
-    //是否顯示下載按鈕
+    //iOS手機不顯示下載按鈕
     if (!isDownloadButtonShow()) {
         $("#downloadReport").hide();
     }
 
+    //android手機顯示hint
+    if (isDownloadAndroidHintShow()) {
+        console.log('download_android_hint show');
+        $("#download_android_hint").show();
+    }else{
+        console.log('download_android_hint hide');
+        $("#download_android_hint").hide();
+    }
 }
 
-//判斷手機型號，決定是否顯示下載按鈕
+//android手機顯示hint
+function isDownloadAndroidHintShow(){
+    var agentID = deviceAgent.match(/(android)/);
+    if (agentID) {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//iOS手機不顯示下載按鈕
 function isDownloadButtonShow(){
-    var deviceAgent = navigator.userAgent.toLowerCase();
-    console.log('deviceAgent='+deviceAgent);
     $("#agent").append(deviceAgent);
-    // alert(deviceAgent);
     var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
     if (agentID) {
         return false;
     }else{
         return true;
     }
-
 }
 
 /**
