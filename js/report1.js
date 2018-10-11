@@ -14,7 +14,6 @@ $(function() {
     initGetParam();
     initConfig();
     initDownloadButton();
-    initDownloadUI();
 
     function initLoadingAnimation(){
         console.log('initLoadingImage()');
@@ -332,16 +331,23 @@ function initDownloadButton() {
         //     saveAs(canvas.toDataURL(), '詳細頁面.png');
         // });
     });
+
+    if (!isDownloadButtonShow()) {
+        $("#downloadReport").hide();
+    }
+
 }
 
 //判斷手機型號，決定是否顯示下載按鈕
-function initDownloadUI(){
+function isDownloadButtonShow(){
     var deviceAgent = navigator.userAgent.toLowerCase();
     console.log('deviceAgent='+deviceAgent);
     alert('deviceAgent='+deviceAgent);
     var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
     if (agentID) {
-
+        return false;
+    }else{
+        return true;
     }
 
 }
