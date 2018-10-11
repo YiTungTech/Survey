@@ -323,10 +323,14 @@ function saveAs(uri, filename) {
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('onclick');
-        html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
+        console.log('onclick_jquery_select1');
+
+        html2canvas(document.querySelector("#table_canvas")).then(function(canvas) {
             saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
         });
+        // html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
+        //     saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+        // });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
         //     saveAs(canvas.toDataURL(), '詳細頁面.png');
         // });
