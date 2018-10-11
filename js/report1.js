@@ -319,6 +319,7 @@ function saveAs(uri, filename) {
     } else {
         window.open(uri);
     }
+    alert('6');
 }
 
 function initDownloadButton() {
@@ -326,6 +327,7 @@ function initDownloadButton() {
         console.log('onclick_jquery_select4');
 
         html2canvas(document.querySelector("#capture")).then(canvas => {
+            document.body.appendChild(canvas);
             saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
         });
 
