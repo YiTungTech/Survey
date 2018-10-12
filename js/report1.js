@@ -1,13 +1,11 @@
 var gFormID = '';
 var gSheetParam = {}; //google sheet所需要的參數
 var config; //json格式的config設定檔
-var isNeedInsert = false;
-var reportLink = '';//insert google sheet的連結，不會重複insert google sheet
-var deviceAgent = navigator.userAgent.toLowerCase();//裝置agent
+
 
 $(function() {
-    console.log('start() ver=5');
-    isNeedInsert = false;//預設不傳送sheet
+    console.log('start() ver=4');
+
     var qmconfig; //json格式的question mapping設定檔
 
     initLoadingAnimation();
@@ -24,7 +22,7 @@ $(function() {
                 $( "#loading" ).fadeOut( "1000", function() {//loading頁 fade out
                     $( "#report" ).fadeIn( "100", function() {});//report頁 fade in
                 });
-            }, 4000);
+            }, 2000);
         });
     }
 
@@ -192,36 +190,20 @@ $(function() {
 });
 
 
+
 //1.將http get參數存放到物件「gSheetParam」
-//2.組合出google sheet url 「reportLink」
+//2.同時組合出google sheet url
 function initGetParam() {
     console.log('initGetParam()');
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    reportLink += window.location.href.split('?')[0] + '?';
-    
+
+
     var hash;
     for (var i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
+        gSheetParam['entry.' + hash[0]] = decodeURIComponent(hash[1]);
+    }
 
-        var key = hash[0];
-        var value = hash[1];
-        if (key == KEY_INSERT) {
-            //如果是非問卷題目，特殊處理
-            if (value == VALUE_INSERT_TRUE) {
-                //要insert google sheet
-                isNeedInsert = true;
-            }
-        }else{
-            //問卷題目
-            reportLink += (key + '=' + value + '&');
-            gSheetParam['entry.' + key] = decodeURIComponent(value);    
-        }
-    }
-    //如果reportLink最後是「?」，則移除
-    if (reportLink.charAt(reportLink.length - 1) == '&') {
-        reportLink = reportLink.substring(0, reportLink.length - 1);
-    }
-    // console.log('reportLink='+reportLink);
     // console.log('initGetParam()='+JSON.stringify(gSheetParam));
 }
 
@@ -234,20 +216,13 @@ function getUrlVar(name) {
 //send gooogle sheet request
 function sendGoogleSheet(gMergeParam) {
 
-    if (!isNeedInsert) {
-        console.log('no send google sheet');
-        return false;
-    }else{
-        console.log('send google sheet');
-    }
-
     //額外送出欄位1. USER優氧循環 2.USER建議清單
     var linkQid = config.systemField[0].question[0].qid; //儲存連結欄位
     var gMergeQid = config.systemField[0].question[1].qid; //google sheet plugin G-Merge所需欄位
-    gSheetParam['entry.' + linkQid] = reportLink;
+    gSheetParam['entry.' + linkQid] = window.location.href;
     gSheetParam['entry.' + gMergeQid] = gMergeParam.toString(); //toString預設就會使用comma隔開所有參數
 
-//todo 暫時不送
+
     // console.log('send google sheet參數=' + JSON.stringify(gSheetParam));
     // console.log('https://docs.google.com/forms/d/e/' + gFormID + '/formResponse?' + JSON.stringify(gSheetParam));
     $.ajax({
@@ -305,73 +280,32 @@ function createGMergeParam(A, B_typeA, B_typeB, C, D) {
 }
 
 //下載檔案到local
-// function saveAs(uri, filename) {
-//     var link = document.createElement('a');
-//     if (typeof link.download === 'string') {
-//         link.href = uri;
-//         link.download = filename;
-//         //Firefox requires the link to be in the body
-//         document.body.appendChild(link);
-//         //simulate click
-//         link.click();
-//         //remove the link when done
-//         // document.body.removeChild(link);//todo 測試暫時移除
-//     } else {
-//         window.open(uri);
-//     }
-    
-// }
+function saveAs(uri, filename) {
+    var link = document.createElement('a');
+    if (typeof link.download === 'string') {
+        link.href = uri;
+        link.download = filename;
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link);
+        //simulate click
+        link.click();
+        //remove the link when done
+        document.body.removeChild(link);
+    } else {
+        window.open(uri);
+    }
+}
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('initDownloadButton()11');
-
-        html2canvas(document.querySelector("#capture")).then(canvas => {
-            // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
-            var link = document.createElement('a');
-              link.download = '優氧循環檢驗報告.jpg';
-              link.href = canvas.toDataURL("image/jpeg",0.5);
-              link.click();
+        console.log('onclick');
+        html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
+            saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
         });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
         //     saveAs(canvas.toDataURL(), '詳細頁面.png');
         // });
     });
-
-    //iOS手機不顯示下載按鈕
-    if (!isDownloadButtonShow()) {
-        $("#downloadReport").hide();
-    }
-
-    //android手機顯示hint
-    if (isDownloadAndroidHintShow()) {
-        console.log('download_android_hint show');
-        $("#download_android_hint").show();
-    }else{
-        console.log('download_android_hint hide');
-        $("#download_android_hint").hide();
-    }
-}
-
-//android手機顯示hint
-function isDownloadAndroidHintShow(){
-    var agentID = deviceAgent.match(/(android)/);
-    if (agentID) {
-        return true;
-    }else{
-        return false;
-    }
-}
-
-//iOS手機不顯示下載按鈕
-function isDownloadButtonShow(){
-    $("#agent").append(deviceAgent);
-    var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
-    if (agentID) {
-        return false;
-    }else{
-        return true;
-    }
 }
 
 /**

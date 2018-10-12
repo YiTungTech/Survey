@@ -1,6 +1,5 @@
 var COOKIE_KEY_LAST_RECORD_URL = 'LAST_RECORD'; //上一次檢驗報告記錄
-var CONFIG_DEFAULT_SELECT_TYPE_A = 2; //5個選項radio預設選項
-var CONFIG_DEFAULT_SELECT_TYPE_B = 0; //2個選項radio預設選項
+var CONFIG_DEFAULT_SELECT = 2; //radio預設選項
 var currentPage = 0;//預設第一頁pages
 
 var config; //json格式的config設定檔
@@ -53,12 +52,8 @@ function init() {
     });
 
     //預設勾選第一個radio button
-    $('.radio-type-A').each(function(index, element) {
-        $(this).find('input').eq(CONFIG_DEFAULT_SELECT_TYPE_A).attr('checked', true);
-    });
-
-    $('.radio-type-B').each(function(index, element) {
-        $(this).find('input').eq(CONFIG_DEFAULT_SELECT_TYPE_B).attr('checked', true);
+    $('fieldset').each(function(index, element) {
+        $(this).find('input').eq(CONFIG_DEFAULT_SELECT).attr('checked', true);
     });
 
     //檢查是否有上次檢驗報告紀錄
@@ -144,8 +139,7 @@ function init() {
 
         //將參數記錄至cookie，下次使用
         Cookies.set(COOKIE_KEY_LAST_RECORD_URL, url, { expires: 365 });
-        //增加參數 
-        url += ('&' + KEY_INSERT + '=' + VALUE_INSERT_TRUE);//(需要insert google sheet)
+
         //導網址
         goNextPage(url);
 
@@ -219,10 +213,11 @@ function initInputField() {
     //page5 您的服務人員（客戶專用）
     //title
     $('#page5-1-contact-title').html(config.page[4].title);
+    $('#page5-1-contact-subtitle').html(config.page[4].title);
     $('#page5-2-contact-title').html(config.page[5].title);
+    $('#page5-2-contact-subtitle').html(config.page[5].title);
     //subtitle
-    $('#page5-1-contact-subtitle').html(config.page[4].subtitle);
-    $('#page5-2-contact-subtitle').html(config.page[5].subtitle);
+    $('#page1-contact-subtitle').html(config.page[1].subtitle);
     $('#ui_if_2_0_value').attr('placeholder', config.inputField[2].question[0].title);
     $('#ui_if_2_0_value').attr('name', config.inputField[2].question[0].qid);
 }
@@ -246,10 +241,8 @@ function checkInputField() {
 //在UI上面產生題目
 function initSessionUI() {
     console.log('initSessionUI()');
-    var source_type_A = document.getElementById("template-radio-type-A").innerHTML;
-    var source_type_B = document.getElementById("template-radio-type-B").innerHTML;
-    var template_type_A = Handlebars.compile(source_type_A);
-    var template_type_B = Handlebars.compile(source_type_B);
+    var source = document.getElementById("entry-template").innerHTML;
+    var template = Handlebars.compile(source);
 
     for(var sIndex=0;sIndex<6;sIndex++) {
         var session = config.session[sIndex].question;
@@ -266,13 +259,8 @@ function initSessionUI() {
 
         $.each(session, function(index, data) {
             var context = { title: data.title, name: data.qid, hint: hintText};
-            var type = data.type;
-            var html;
-            if (type=='B') {
-                html = template_type_B(context);
-            }else{
-                html = template_type_A(context);
-            }
+            var html = template(context);
+
             
             var pageID = '#page'+pageIndex+'-question';
             //append html
@@ -280,4 +268,3 @@ function initSessionUI() {
         });
     }
 }
-

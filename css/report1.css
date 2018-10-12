@@ -183,13 +183,19 @@
     /*row之間的距離*/
     border-color: #34d6b7;
     border-radius: 0;
-    border-width: 3px;
 }
 
 
 .card-columns-header {
     column-count: 1;
 }
+
+#ui_D_1,
+#ui_D_2 {
+    color: #36837b;
+}
+
+
 
 
 @media (min-width: 576px) {}
@@ -201,6 +207,13 @@
     .general-text {
         font-size: 1.4em;
     }
+
+    #ui_D_1,
+    #ui_D_2 {
+        color: #36837b;
+
+    }
+
 
     .card-title {
         font-size: 1.3em;
@@ -221,8 +234,8 @@
     }
 
     .card-grid-middle-large {
-        min-height: 345px;
-        max-height: 345px;
+        min-height: 339px;
+        max-height: 339px;
     }
 
     .card-grid-middle-small {
