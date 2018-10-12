@@ -323,11 +323,15 @@ function saveAs(uri, filename) {
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('onclick_jquery_select2');
+        console.log('onclick_jquery_select3');
 
-        html2canvas(document.querySelector("#canvas")).then(function(canvas) {
-            saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+        html2canvas(document.querySelector("#capture")).then(canvas => {
+            document.body.appendChild(canvas)
         });
+
+        // html2canvas(document.querySelector("#canvas")).then(function(canvas) {
+        //     saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+        // });
         // html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
         //     saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
         // });
