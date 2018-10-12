@@ -191,13 +191,6 @@
     column-count: 1;
 }
 
-#ui_D_1,
-#ui_D_2 {
-    color: #36837b;
-}
-
-
-
 
 @media (min-width: 576px) {}
 
@@ -208,13 +201,6 @@
     .general-text {
         font-size: 1.4em;
     }
-
-    #ui_D_1,
-    #ui_D_2 {
-        color: #36837b;
-
-    }
-
 
     .card-title {
         font-size: 1.3em;

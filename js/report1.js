@@ -3,7 +3,7 @@ var gSheetParam = {}; //google sheet所需要的參數
 var config; //json格式的config設定檔
 var isNeedInsert = false;
 var reportLink = '';//insert google sheet的連結，不會重複insert google sheet
-
+var deviceAgent = navigator.userAgent.toLowerCase();//裝置agent
 
 $(function() {
     console.log('start() ver=5');
@@ -24,7 +24,7 @@ $(function() {
                 $( "#loading" ).fadeOut( "1000", function() {//loading頁 fade out
                     $( "#report" ).fadeIn( "100", function() {});//report頁 fade in
                 });
-            }, 2000);
+            }, 4000);
         });
     }
 
@@ -305,32 +305,73 @@ function createGMergeParam(A, B_typeA, B_typeB, C, D) {
 }
 
 //下載檔案到local
-function saveAs(uri, filename) {
-    var link = document.createElement('a');
-    if (typeof link.download === 'string') {
-        link.href = uri;
-        link.download = filename;
-        //Firefox requires the link to be in the body
-        document.body.appendChild(link);
-        //simulate click
-        link.click();
-        //remove the link when done
-        document.body.removeChild(link);
-    } else {
-        window.open(uri);
-    }
-}
+// function saveAs(uri, filename) {
+//     var link = document.createElement('a');
+//     if (typeof link.download === 'string') {
+//         link.href = uri;
+//         link.download = filename;
+//         //Firefox requires the link to be in the body
+//         document.body.appendChild(link);
+//         //simulate click
+//         link.click();
+//         //remove the link when done
+//         // document.body.removeChild(link);//todo 測試暫時移除
+//     } else {
+//         window.open(uri);
+//     }
+    
+// }
 
 function initDownloadButton() {
     $("#downloadReport").on('click', function() {
-        console.log('onclick');
-        html2canvas(document.getElementById("table_canvas")).then(function(canvas) {
-            saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+        console.log('initDownloadButton()11');
+
+        html2canvas(document.querySelector("#capture")).then(canvas => {
+            // saveAs(canvas.toDataURL(), '優氧循環檢驗報告.png');
+            var link = document.createElement('a');
+              link.download = '優氧循環檢驗報告.jpg';
+              link.href = canvas.toDataURL("image/jpeg",0.5);
+              link.click();
         });
         // html2canvas(document.getElementById("testdiv2")).then(function(canvas) {
         //     saveAs(canvas.toDataURL(), '詳細頁面.png');
         // });
     });
+
+    //iOS手機不顯示下載按鈕
+    if (!isDownloadButtonShow()) {
+        $("#downloadReport").hide();
+    }
+
+    //android手機顯示hint
+    if (isDownloadAndroidHintShow()) {
+        console.log('download_android_hint show');
+        $("#download_android_hint").show();
+    }else{
+        console.log('download_android_hint hide');
+        $("#download_android_hint").hide();
+    }
+}
+
+//android手機顯示hint
+function isDownloadAndroidHintShow(){
+    var agentID = deviceAgent.match(/(android)/);
+    if (agentID) {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//iOS手機不顯示下載按鈕
+function isDownloadButtonShow(){
+    $("#agent").append(deviceAgent);
+    var agentID = deviceAgent.match(/(iphone|ipod|ipad)/);
+    if (agentID) {
+        return false;
+    }else{
+        return true;
+    }
 }
 
 /**
