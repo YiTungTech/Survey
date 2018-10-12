@@ -183,6 +183,7 @@
     /*row之間的距離*/
     border-color: #34d6b7;
     border-radius: 0;
+    border-width: 3px;
 }
 
 
@@ -234,8 +235,8 @@
     }
 
     .card-grid-middle-large {
-        min-height: 339px;
-        max-height: 339px;
+        min-height: 345px;
+        max-height: 345px;
     }
 
     .card-grid-middle-small {

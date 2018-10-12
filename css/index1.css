@@ -93,11 +93,11 @@
 }
 
 .radio-level {
-    font-size: 0.6em;
+    font-size: 1.0em;
 }
 
 .radio-number {
-    font-size: 1.6em;
+    font-size: 1.0em;
 }
 
 
@@ -147,11 +147,17 @@
     }
 
     .radio-level {
-        font-size: 1.0em;
+        font-size: 1.4em;
     }
 
     .radio-number {
-        font-size: 2.2em;
+        font-size: 1.4em;
+    }
+
+    input[type=radio] {
+        width: 20px;
+        height: 20px;
+        transform: scale(1.5);
     }
 }
 
